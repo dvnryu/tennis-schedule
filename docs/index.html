@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>富士見テニスコート 抽選状況</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #0f172a; color: #e2e8f0; padding: 20px;
+    max-width: 1200px; margin: 0 auto;
+  }
+  h1 {
+    text-align: center; font-size: 1.6em; margin-bottom: 4px;
+    background: linear-gradient(135deg, #22d3ee, #a78bfa);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .subtitle { text-align: center; color: #94a3b8; font-size: 0.85em; margin-bottom: 24px; }
+  .legend {
+    display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;
+    margin-bottom: 24px; font-size: 0.82em;
+  }
+  .legend span {
+    padding: 4px 10px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px;
+  }
+  .legend .hot { background: #065f46; color: #6ee7b7; }
+  .legend .easy { background: #1e3a5f; color: #7dd3fc; }
+  .legend .medium { background: #713f12; color: #fde68a; }
+  .legend .hard { background: #7f1d1d; color: #fca5a5; }
+  .legend .unavailable { background: #1e293b; color: #64748b; }
+
+  .facility {
+    background: #1e293b; border-radius: 12px; margin-bottom: 20px;
+    overflow: hidden; border: 1px solid #334155;
+  }
+  .facility-header {
+    padding: 12px 20px; font-size: 1.1em; font-weight: 600;
+    background: linear-gradient(135deg, #1e3a5f, #312e81);
+    cursor: pointer; user-select: none;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .facility-header:hover { background: linear-gradient(135deg, #1e40af, #4338ca); }
+  .facility-header .toggle { font-size: 0.8em; color: #94a3b8; }
+  .facility-body { padding: 12px; overflow-x: auto; }
+  .facility-body.collapsed { display: none; }
+
+  table {
+    width: 100%; border-collapse: collapse; font-size: 0.85em;
+    margin-bottom: 8px;
+  }
+  th, td {
+    padding: 6px 8px; text-align: center; white-space: nowrap;
+    border: 1px solid #334155;
+  }
+  th { background: #334155; font-weight: 600; position: sticky; top: 0; }
+  th.weekend { background: #3b2d60; }
+  td.time { background: #1e3a5f; font-weight: 600; text-align: right; }
+  td.hot { background: #065f46; color: #6ee7b7; font-weight: 700; }
+  td.easy { background: #0c3547; color: #7dd3fc; }
+  td.medium { background: #422006; color: #fde68a; }
+  td.hard { background: #450a0a; color: #fca5a5; }
+  td.unavailable { background: #0f172a; color: #475569; }
+  td.weekend { background-color: rgba(99, 102, 241, 0.08); }
+
+  .week-label {
+    font-size: 0.75em; color: #64748b; padding: 8px 0 2px;
+    border-bottom: 1px solid #1e293b;
+  }
+
+  @media (max-width: 640px) {
+    body { padding: 8px; }
+    table { font-size: 0.75em; }
+    th, td { padding: 4px 3px; }
+  }
+</style>
+</head>
+<body>
+<h1>&#127934; 富士見テニスコート 抽選申込状況</h1>
+<p class="subtitle">更新時間: 2026-02-07 12:21 &nbsp;|&nbsp; 対象月: 3月 &nbsp;|&nbsp; 格式: 名額数/申請人数</p>
+
+<div class="legend">
+  <span class="hot">&#9733; 0人 必中</span>
+  <span class="easy">1~3人 容易</span>
+  <span class="medium">4~10人 一般</span>
+  <span class="hard">11人+ 激戦</span>
+  <span class="unavailable">- 不可</span>
+</div>
+<div class="facility">
+<div class="facility-header" onclick="this.nextElementSibling.classList.toggle('collapsed')">富士見テニス場１ <span class="toggle">&#9660;</span></div>
+<div class="facility-body">
+<table>
+<tr><th>时段</th><th class="weekend">3/1(日)</th><th>3/2(月)</th><th>3/3(火)</th><th>3/4(水)</th><th>3/5(木)</th><th>3/6(金)</th><th class="weekend">3/7(土)</th></tr>
+<tr><td class="time">09:00</td><td class="unavailable weekend">-</td><td class="easy">1/1</td><td class="easy">1/1</td><td class="hard">1/76</td><td class="easy">1/2</td><td class="medium">1/4</td><td class="medium weekend">1/9</td></tr>
+<tr><td class="time">11:00</td><td class="unavailable weekend">-</td><td class="easy">1/1</td><td class="hard">1/12</td><td class="hot">&#9733;1/0</td><td class="hard">1/17</td><td class="medium">1/9</td><td class="hard weekend">1/16</td></tr>
+<tr><td class="time">13:00</td><td class="unavailable weekend">-</td><td class="hot">&#9733;1/0</td><td class="easy">1/1</td><td class="medium">1/9</td><td class="easy">1/3</td><td class="medium">1/9</td><td class="medium weekend">1/9</td></tr>
+<tr><td class="time">15:00</td><td class="unavailable weekend">-</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="easy">1/2</td><td class="hot">&#9733;1/0</td><td class="hard weekend">1/13</td></tr>
+<tr><td class="time">17:00</td><td class="unavailable weekend">-</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="easy weekend">1/3</td></tr>
+<tr><td class="time">18:30</td><td class="easy weekend">1/2</td><td class="medium">1/7</td><td class="hard">1/11</td><td class="hard">1/16</td><td class="hard">1/32</td><td class="hard">1/55</td><td class="hard weekend">1/20</td></tr>
+</table>
+<table>
+<tr><th>时段</th><th class="weekend">3/8(日)</th><th>3/9(月)</th><th>3/10(火)</th><th>3/11(水)</th><th>3/12(木)</th><th>3/13(金)</th><th class="weekend">3/14(土)</th></tr>
+<tr><td class="time">09:00</td><td class="hard weekend">1/25</td><td class="unavailable">-</td><td class="easy">1/1</td><td class="hard">1/88</td><td class="easy">1/1</td><td class="hard">1/11</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">11:00</td><td class="medium weekend">1/9</td><td class="unavailable">-</td><td class="medium">1/6</td><td class="easy">1/1</td><td class="hard">1/19</td><td class="hard">1/20</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">13:00</td><td class="medium weekend">1/9</td><td class="unavailable">-</td><td class="easy">1/1</td><td class="easy">1/1</td><td class="hot">&#9733;1/0</td><td class="hard">1/22</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">15:00</td><td class="medium weekend">1/10</td><td class="unavailable">-</td><td class="hot">&#9733;1/0</td><td class="easy">1/1</td><td class="easy">1/2</td><td class="hot">&#9733;1/0</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">17:00</td><td class="easy weekend">1/1</td><td class="unavailable">-</td><td class="hot">&#9733;1/0</td><td class="easy">1/1</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="medium weekend">1/10</td></tr>
+<tr><td class="time">18:30</td><td class="easy weekend">1/2</td><td class="unavailable">-</td><td class="hard">1/29</td><td class="hard">1/60</td><td class="medium">1/8</td><td class="hard">1/21</td><td class="medium weekend">1/8</td></tr>
+</table>
+<table>
+<tr><th>时段</th><th class="weekend">3/15(日)</th><th>3/16(月)</th><th>3/17(火)</th><th>3/18(水)</th><th>3/19(木)</th><th>3/20(金)</th><th class="weekend">3/21(土)</th></tr>
+<tr><td class="time">09:00</td><td class="hard weekend">1/13</td><td class="easy">1/1</td><td class="easy">1/1</td><td class="hard">1/80</td><td class="easy">1/1</td><td class="hard">1/20</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">11:00</td><td class="hard weekend">1/15</td><td class="easy">1/2</td><td class="medium">1/6</td><td class="medium">1/5</td><td class="hard">1/11</td><td class="medium">1/9</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">13:00</td><td class="medium weekend">1/10</td><td class="easy">1/2</td><td class="medium">1/5</td><td class="easy">1/2</td><td class="hot">&#9733;1/0</td><td class="medium">1/10</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">15:00</td><td class="medium weekend">1/10</td><td class="easy">1/2</td><td class="medium">1/4</td><td class="easy">1/1</td><td class="hard">1/16</td><td class="medium">1/8</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">17:00</td><td class="easy weekend">1/1</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="medium">1/4</td><td class="easy weekend">1/3</td></tr>
+<tr><td class="time">18:30</td><td class="easy weekend">1/2</td><td class="hard">1/24</td><td class="hard">1/11</td><td class="hard">1/24</td><td class="hard">1/28</td><td class="medium">1/9</td><td class="hard weekend">1/18</td></tr>
+</table>
+<table>
+<tr><th>时段</th><th class="weekend">3/22(日)</th><th>3/23(月)</th><th>3/24(火)</th><th>3/25(水)</th><th>3/26(木)</th><th>3/27(金)</th><th class="weekend">3/28(土)</th></tr>
+<tr><td class="time">09:00</td><td class="unavailable weekend">-</td><td class="easy">1/1</td><td class="unavailable">-</td><td class="hard">1/79</td><td class="hard">1/11</td><td class="unavailable">-</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">11:00</td><td class="unavailable weekend">-</td><td class="easy">1/2</td><td class="unavailable">-</td><td class="medium">1/6</td><td class="medium">1/6</td><td class="unavailable">-</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">13:00</td><td class="unavailable weekend">-</td><td class="easy">1/2</td><td class="unavailable">-</td><td class="medium">1/8</td><td class="easy">1/1</td><td class="unavailable">-</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">15:00</td><td class="unavailable weekend">-</td><td class="easy">1/2</td><td class="unavailable">-</td><td class="easy">1/1</td><td class="easy">1/2</td><td class="unavailable">-</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">17:00</td><td class="medium weekend">1/6</td><td class="hot">&#9733;1/0</td><td class="unavailable">-</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="easy weekend">1/3</td></tr>
+<tr><td class="time">18:30</td><td class="easy weekend">1/1</td><td class="hard">1/22</td><td class="unavailable">-</td><td class="hard">1/62</td><td class="medium">1/7</td><td class="hard">1/13</td><td class="medium weekend">1/4</td></tr>
+</table>
+<table>
+<tr><th>时段</th><th class="weekend">3/29(日)</th><th>3/30(月)</th><th>3/31(火)</th></tr>
+<tr><td class="time">09:00</td><td class="unavailable weekend">-</td><td class="medium">1/4</td><td class="medium">1/7</td></tr>
+<tr><td class="time">11:00</td><td class="unavailable weekend">-</td><td class="medium">1/5</td><td class="hard">1/33</td></tr>
+<tr><td class="time">13:00</td><td class="unavailable weekend">-</td><td class="medium">1/4</td><td class="medium">1/4</td></tr>
+<tr><td class="time">15:00</td><td class="unavailable weekend">-</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td></tr>
+<tr><td class="time">17:00</td><td class="easy weekend">1/2</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td></tr>
+<tr><td class="time">18:30</td><td class="easy weekend">1/3</td><td class="easy">1/3</td><td class="easy">1/3</td></tr>
+</table>
+</div></div>
+<div class="facility">
+<div class="facility-header" onclick="this.nextElementSibling.classList.toggle('collapsed')">富士見テニス場２ <span class="toggle">&#9660;</span></div>
+<div class="facility-body">
+<table>
+<tr><th>时段</th><th class="weekend">3/1(日)</th><th>3/2(月)</th><th>3/3(火)</th><th>3/4(水)</th><th>3/5(木)</th><th>3/6(金)</th><th class="weekend">3/7(土)</th></tr>
+<tr><td class="time">09:00</td><td class="unavailable weekend">-</td><td class="medium">1/5</td><td class="medium">1/10</td><td class="medium">1/5</td><td class="medium">1/4</td><td class="easy">1/3</td><td class="medium weekend">1/6</td></tr>
+<tr><td class="time">11:00</td><td class="unavailable weekend">-</td><td class="hot">&#9733;1/0</td><td class="easy">1/1</td><td class="hot">&#9733;1/0</td><td class="medium">1/7</td><td class="medium">1/7</td><td class="hard weekend">1/18</td></tr>
+<tr><td class="time">13:00</td><td class="unavailable weekend">-</td><td class="hot">&#9733;1/0</td><td class="easy">1/1</td><td class="hot">&#9733;1/0</td><td class="easy">1/1</td><td class="hard">1/13</td><td class="medium weekend">1/9</td></tr>
+<tr><td class="time">15:00</td><td class="unavailable weekend">-</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="easy">1/1</td><td class="hot">&#9733;1/0</td><td class="medium weekend">1/9</td></tr>
+<tr><td class="time">17:00</td><td class="unavailable weekend">-</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="easy weekend">1/2</td></tr>
+<tr><td class="time">18:30</td><td class="easy weekend">1/3</td><td class="medium">1/4</td><td class="medium">1/6</td><td class="hard">1/12</td><td class="medium">1/5</td><td class="hard">1/24</td><td class="easy weekend">1/2</td></tr>
+</table>
+<table>
+<tr><th>时段</th><th class="weekend">3/8(日)</th><th>3/9(月)</th><th>3/10(火)</th><th>3/11(水)</th><th>3/12(木)</th><th>3/13(金)</th><th class="weekend">3/14(土)</th></tr>
+<tr><td class="time">09:00</td><td class="hard weekend">1/19</td><td class="unavailable">-</td><td class="medium">1/10</td><td class="medium">1/5</td><td class="medium">1/5</td><td class="medium">1/10</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">11:00</td><td class="hard weekend">1/18</td><td class="unavailable">-</td><td class="easy">1/1</td><td class="easy">1/2</td><td class="medium">1/6</td><td class="medium">1/10</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">13:00</td><td class="medium weekend">1/6</td><td class="unavailable">-</td><td class="easy">1/1</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hard">1/21</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">15:00</td><td class="medium weekend">1/6</td><td class="unavailable">-</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">17:00</td><td class="easy weekend">1/1</td><td class="unavailable">-</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="medium weekend">1/8</td></tr>
+<tr><td class="time">18:30</td><td class="easy weekend">1/2</td><td class="unavailable">-</td><td class="hard">1/19</td><td class="hard">1/11</td><td class="medium">1/8</td><td class="hard">1/29</td><td class="medium weekend">1/10</td></tr>
+</table>
+<table>
+<tr><th>时段</th><th class="weekend">3/15(日)</th><th>3/16(月)</th><th>3/17(火)</th><th>3/18(水)</th><th>3/19(木)</th><th>3/20(金)</th><th class="weekend">3/21(土)</th></tr>
+<tr><td class="time">09:00</td><td class="hard weekend">1/13</td><td class="medium">1/5</td><td class="medium">1/9</td><td class="medium">1/5</td><td class="medium">1/6</td><td class="hard">1/18</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">11:00</td><td class="hard weekend">1/20</td><td class="easy">1/2</td><td class="medium">1/4</td><td class="hot">&#9733;1/0</td><td class="medium">1/6</td><td class="medium">1/7</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">13:00</td><td class="hard weekend">1/20</td><td class="easy">1/2</td><td class="easy">1/2</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="medium">1/8</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">15:00</td><td class="medium weekend">1/6</td><td class="easy">1/2</td><td class="hot">&#9733;1/0</td><td class="easy">1/1</td><td class="hot">&#9733;1/0</td><td class="medium">1/7</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">17:00</td><td class="easy weekend">1/1</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="easy">1/1</td><td class="easy weekend">1/2</td></tr>
+<tr><td class="time">18:30</td><td class="medium weekend">1/4</td><td class="medium">1/4</td><td class="medium">1/4</td><td class="hard">1/11</td><td class="hard">1/18</td><td class="easy">1/1</td><td class="medium weekend">1/5</td></tr>
+</table>
+<table>
+<tr><th>时段</th><th class="weekend">3/22(日)</th><th>3/23(月)</th><th>3/24(火)</th><th>3/25(水)</th><th>3/26(木)</th><th>3/27(金)</th><th class="weekend">3/28(土)</th></tr>
+<tr><td class="time">09:00</td><td class="unavailable weekend">-</td><td class="easy">1/1</td><td class="unavailable">-</td><td class="medium">1/5</td><td class="hard">1/13</td><td class="unavailable">-</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">11:00</td><td class="unavailable weekend">-</td><td class="easy">1/2</td><td class="unavailable">-</td><td class="easy">1/1</td><td class="medium">1/10</td><td class="unavailable">-</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">13:00</td><td class="unavailable weekend">-</td><td class="easy">1/2</td><td class="unavailable">-</td><td class="hot">&#9733;1/0</td><td class="easy">1/1</td><td class="unavailable">-</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">15:00</td><td class="unavailable weekend">-</td><td class="easy">1/2</td><td class="unavailable">-</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="unavailable">-</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">17:00</td><td class="hot weekend">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="unavailable">-</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="easy weekend">1/3</td></tr>
+<tr><td class="time">18:30</td><td class="easy weekend">1/1</td><td class="medium">1/4</td><td class="unavailable">-</td><td class="hard">1/15</td><td class="medium">1/8</td><td class="medium">1/9</td><td class="medium weekend">1/5</td></tr>
+</table>
+<table>
+<tr><th>时段</th><th class="weekend">3/29(日)</th><th>3/30(月)</th><th>3/31(火)</th></tr>
+<tr><td class="time">09:00</td><td class="unavailable weekend">-</td><td class="medium">1/5</td><td class="medium">1/10</td></tr>
+<tr><td class="time">11:00</td><td class="unavailable weekend">-</td><td class="easy">1/2</td><td class="hot">&#9733;1/0</td></tr>
+<tr><td class="time">13:00</td><td class="unavailable weekend">-</td><td class="easy">1/2</td><td class="easy">1/3</td></tr>
+<tr><td class="time">15:00</td><td class="unavailable weekend">-</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td></tr>
+<tr><td class="time">17:00</td><td class="easy weekend">1/1</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td></tr>
+<tr><td class="time">18:30</td><td class="easy weekend">1/2</td><td class="medium">1/4</td><td class="easy">1/2</td></tr>
+</table>
+</div></div>
+<div class="facility">
+<div class="facility-header" onclick="this.nextElementSibling.classList.toggle('collapsed')">富士見テニス場３ <span class="toggle">&#9660;</span></div>
+<div class="facility-body">
+<table>
+<tr><th>时段</th><th class="weekend">3/1(日)</th><th>3/2(月)</th><th>3/3(火)</th><th>3/4(水)</th><th>3/5(木)</th><th>3/6(金)</th><th class="weekend">3/7(土)</th></tr>
+<tr><td class="time">09:00</td><td class="unavailable weekend">-</td><td class="medium">1/4</td><td class="medium">1/5</td><td class="medium">1/4</td><td class="hard">1/15</td><td class="medium">1/5</td><td class="hard weekend">1/36</td></tr>
+<tr><td class="time">11:00</td><td class="unavailable weekend">-</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="easy">1/1</td><td class="hard">1/16</td><td class="easy">1/1</td><td class="hard weekend">1/11</td></tr>
+<tr><td class="time">13:00</td><td class="unavailable weekend">-</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="easy">1/3</td><td class="medium">1/5</td><td class="hard weekend">1/13</td></tr>
+<tr><td class="time">15:00</td><td class="unavailable weekend">-</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hard weekend">1/12</td></tr>
+<tr><td class="time">17:00</td><td class="unavailable weekend">-</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="easy weekend">1/3</td></tr>
+<tr><td class="time">18:30</td><td class="easy weekend">1/1</td><td class="hard">1/19</td><td class="hard">1/21</td><td class="hard">1/14</td><td class="hard">1/15</td><td class="easy">1/2</td><td class="easy weekend">1/2</td></tr>
+</table>
+<table>
+<tr><th>时段</th><th class="weekend">3/8(日)</th><th>3/9(月)</th><th>3/10(火)</th><th>3/11(水)</th><th>3/12(木)</th><th>3/13(金)</th><th class="weekend">3/14(土)</th></tr>
+<tr><td class="time">09:00</td><td class="medium weekend">1/8</td><td class="unavailable">-</td><td class="easy">1/1</td><td class="medium">1/4</td><td class="hard">1/15</td><td class="medium">1/5</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">11:00</td><td class="medium weekend">1/8</td><td class="unavailable">-</td><td class="easy">1/1</td><td class="easy">1/1</td><td class="medium">1/4</td><td class="medium">1/4</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">13:00</td><td class="hard weekend">1/16</td><td class="unavailable">-</td><td class="easy">1/1</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="medium">1/4</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">15:00</td><td class="hard weekend">1/14</td><td class="unavailable">-</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">17:00</td><td class="easy weekend">1/1</td><td class="unavailable">-</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hard weekend">1/16</td></tr>
+<tr><td class="time">18:30</td><td class="easy weekend">1/3</td><td class="unavailable">-</td><td class="hard">1/18</td><td class="hard">1/38</td><td class="hard">1/15</td><td class="hard">1/22</td><td class="medium weekend">1/6</td></tr>
+</table>
+<table>
+<tr><th>时段</th><th class="weekend">3/15(日)</th><th>3/16(月)</th><th>3/17(火)</th><th>3/18(水)</th><th>3/19(木)</th><th>3/20(金)</th><th class="weekend">3/21(土)</th></tr>
+<tr><td class="time">09:00</td><td class="hard weekend">1/15</td><td class="medium">1/4</td><td class="easy">1/1</td><td class="medium">1/4</td><td class="hard">1/20</td><td class="hard">1/22</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">11:00</td><td class="hard weekend">1/11</td><td class="easy">1/2</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hard">1/15</td><td class="medium">1/9</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">13:00</td><td class="hard weekend">1/14</td><td class="easy">1/2</td><td class="easy">1/1</td><td class="hot">&#9733;1/0</td><td class="easy">1/2</td><td class="hard">1/11</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">15:00</td><td class="medium weekend">1/9</td><td class="easy">1/2</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="easy">1/2</td><td class="medium">1/5</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">17:00</td><td class="easy weekend">1/1</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="easy">1/1</td><td class="medium weekend">1/5</td></tr>
+<tr><td class="time">18:30</td><td class="easy weekend">1/2</td><td class="medium">1/5</td><td class="hard">1/19</td><td class="hard">1/30</td><td class="hard">1/16</td><td class="medium">1/4</td><td class="medium weekend">1/6</td></tr>
+</table>
+<table>
+<tr><th>时段</th><th class="weekend">3/22(日)</th><th>3/23(月)</th><th>3/24(火)</th><th>3/25(水)</th><th>3/26(木)</th><th>3/27(金)</th><th class="weekend">3/28(土)</th></tr>
+<tr><td class="time">09:00</td><td class="unavailable weekend">-</td><td class="medium">1/5</td><td class="unavailable">-</td><td class="medium">1/4</td><td class="hard">1/31</td><td class="unavailable">-</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">11:00</td><td class="unavailable weekend">-</td><td class="hot">&#9733;1/0</td><td class="unavailable">-</td><td class="hard">1/16</td><td class="hard">1/25</td><td class="unavailable">-</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">13:00</td><td class="unavailable weekend">-</td><td class="hot">&#9733;1/0</td><td class="unavailable">-</td><td class="hot">&#9733;1/0</td><td class="easy">1/1</td><td class="unavailable">-</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">15:00</td><td class="unavailable weekend">-</td><td class="hot">&#9733;1/0</td><td class="unavailable">-</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="unavailable">-</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">17:00</td><td class="easy weekend">1/1</td><td class="hot">&#9733;1/0</td><td class="unavailable">-</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="easy weekend">1/3</td></tr>
+<tr><td class="time">18:30</td><td class="easy weekend">1/2</td><td class="easy">1/1</td><td class="unavailable">-</td><td class="medium">1/10</td><td class="hard">1/13</td><td class="easy">1/3</td><td class="easy weekend">1/2</td></tr>
+</table>
+<table>
+<tr><th>时段</th><th class="weekend">3/29(日)</th><th>3/30(月)</th><th>3/31(火)</th></tr>
+<tr><td class="time">09:00</td><td class="unavailable weekend">-</td><td class="medium">1/4</td><td class="easy">1/1</td></tr>
+<tr><td class="time">11:00</td><td class="unavailable weekend">-</td><td class="easy">1/2</td><td class="easy">1/1</td></tr>
+<tr><td class="time">13:00</td><td class="unavailable weekend">-</td><td class="easy">1/2</td><td class="easy">1/1</td></tr>
+<tr><td class="time">15:00</td><td class="unavailable weekend">-</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td></tr>
+<tr><td class="time">17:00</td><td class="easy weekend">1/1</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td></tr>
+<tr><td class="time">18:30</td><td class="medium weekend">1/4</td><td class="easy">1/3</td><td class="hard">1/15</td></tr>
+</table>
+</div></div>
+<div class="facility">
+<div class="facility-header" onclick="this.nextElementSibling.classList.toggle('collapsed')">富士見テニス場４ <span class="toggle">&#9660;</span></div>
+<div class="facility-body">
+<table>
+<tr><th>时段</th><th class="weekend">3/1(日)</th><th>3/2(月)</th><th>3/3(火)</th><th>3/4(水)</th><th>3/5(木)</th><th>3/6(金)</th><th class="weekend">3/7(土)</th></tr>
+<tr><td class="time">09:00</td><td class="unavailable weekend">-</td><td class="medium">1/5</td><td class="medium">1/7</td><td class="easy">1/1</td><td class="hard">1/27</td><td class="medium">1/10</td><td class="hard weekend">1/12</td></tr>
+<tr><td class="time">11:00</td><td class="unavailable weekend">-</td><td class="hot">&#9733;1/0</td><td class="easy">1/1</td><td class="hot">&#9733;1/0</td><td class="hard">1/16</td><td class="easy">1/3</td><td class="hard weekend">1/20</td></tr>
+<tr><td class="time">13:00</td><td class="unavailable weekend">-</td><td class="hot">&#9733;1/0</td><td class="easy">1/1</td><td class="hot">&#9733;1/0</td><td class="easy">1/1</td><td class="easy">1/2</td><td class="hard weekend">1/14</td></tr>
+<tr><td class="time">15:00</td><td class="unavailable weekend">-</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hard weekend">1/18</td></tr>
+<tr><td class="time">17:00</td><td class="unavailable weekend">-</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="easy weekend">1/2</td></tr>
+<tr><td class="time">18:30</td><td class="easy weekend">1/1</td><td class="easy">1/1</td><td class="hard">1/22</td><td class="hard">1/13</td><td class="medium">1/6</td><td class="hard">1/11</td><td class="medium weekend">1/7</td></tr>
+</table>
+<table>
+<tr><th>时段</th><th class="weekend">3/8(日)</th><th>3/9(月)</th><th>3/10(火)</th><th>3/11(水)</th><th>3/12(木)</th><th>3/13(金)</th><th class="weekend">3/14(土)</th></tr>
+<tr><td class="time">09:00</td><td class="medium weekend">1/8</td><td class="unavailable">-</td><td class="medium">1/7</td><td class="hard">1/18</td><td class="hard">1/27</td><td class="medium">1/10</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">11:00</td><td class="medium weekend">1/7</td><td class="unavailable">-</td><td class="easy">1/3</td><td class="easy">1/2</td><td class="medium">1/5</td><td class="easy">1/1</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">13:00</td><td class="medium weekend">1/9</td><td class="unavailable">-</td><td class="easy">1/3</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="easy">1/1</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">15:00</td><td class="medium weekend">1/10</td><td class="unavailable">-</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">17:00</td><td class="easy weekend">1/1</td><td class="unavailable">-</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="easy weekend">1/3</td></tr>
+<tr><td class="time">18:30</td><td class="easy weekend">1/1</td><td class="unavailable">-</td><td class="medium">1/6</td><td class="hard">1/22</td><td class="medium">1/7</td><td class="hard">1/39</td><td class="medium weekend">1/9</td></tr>
+</table>
+<table>
+<tr><th>时段</th><th class="weekend">3/15(日)</th><th>3/16(月)</th><th>3/17(火)</th><th>3/18(水)</th><th>3/19(木)</th><th>3/20(金)</th><th class="weekend">3/21(土)</th></tr>
+<tr><td class="time">09:00</td><td class="hard weekend">1/12</td><td class="hot">&#9733;1/0</td><td class="hard">1/12</td><td class="easy">1/1</td><td class="hard">1/28</td><td class="medium">1/10</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">11:00</td><td class="hard weekend">1/12</td><td class="easy">1/2</td><td class="easy">1/2</td><td class="hot">&#9733;1/0</td><td class="hard">1/15</td><td class="medium">1/7</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">13:00</td><td class="hard weekend">1/13</td><td class="easy">1/2</td><td class="easy">1/2</td><td class="hot">&#9733;1/0</td><td class="easy">1/2</td><td class="hard">1/14</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">15:00</td><td class="hard weekend">1/12</td><td class="easy">1/2</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="easy">1/2</td><td class="hard">1/13</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">17:00</td><td class="medium weekend">1/5</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="easy">1/1</td><td class="easy weekend">1/3</td></tr>
+<tr><td class="time">18:30</td><td class="medium weekend">1/5</td><td class="medium">1/7</td><td class="hard">1/12</td><td class="hard">1/22</td><td class="hard">1/15</td><td class="easy">1/2</td><td class="hard weekend">1/11</td></tr>
+</table>
+<table>
+<tr><th>时段</th><th class="weekend">3/22(日)</th><th>3/23(月)</th><th>3/24(火)</th><th>3/25(水)</th><th>3/26(木)</th><th>3/27(金)</th><th class="weekend">3/28(土)</th></tr>
+<tr><td class="time">09:00</td><td class="unavailable weekend">-</td><td class="medium">1/5</td><td class="unavailable">-</td><td class="medium">1/10</td><td class="hard">1/30</td><td class="unavailable">-</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">11:00</td><td class="unavailable weekend">-</td><td class="hot">&#9733;1/0</td><td class="unavailable">-</td><td class="medium">1/7</td><td class="hard">1/13</td><td class="unavailable">-</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">13:00</td><td class="unavailable weekend">-</td><td class="hot">&#9733;1/0</td><td class="unavailable">-</td><td class="medium">1/7</td><td class="easy">1/2</td><td class="unavailable">-</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">15:00</td><td class="unavailable weekend">-</td><td class="hot">&#9733;1/0</td><td class="unavailable">-</td><td class="easy">1/1</td><td class="easy">1/1</td><td class="unavailable">-</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">17:00</td><td class="easy weekend">1/2</td><td class="hot">&#9733;1/0</td><td class="unavailable">-</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hard weekend">1/18</td></tr>
+<tr><td class="time">18:30</td><td class="easy weekend">1/1</td><td class="easy">1/1</td><td class="unavailable">-</td><td class="hard">1/16</td><td class="hard">1/18</td><td class="hard">1/14</td><td class="hard weekend">1/12</td></tr>
+</table>
+<table>
+<tr><th>时段</th><th class="weekend">3/29(日)</th><th>3/30(月)</th><th>3/31(火)</th></tr>
+<tr><td class="time">09:00</td><td class="unavailable weekend">-</td><td class="hot">&#9733;1/0</td><td class="hard">1/13</td></tr>
+<tr><td class="time">11:00</td><td class="unavailable weekend">-</td><td class="hard">1/11</td><td class="easy">1/3</td></tr>
+<tr><td class="time">13:00</td><td class="unavailable weekend">-</td><td class="easy">1/1</td><td class="easy">1/2</td></tr>
+<tr><td class="time">15:00</td><td class="unavailable weekend">-</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td></tr>
+<tr><td class="time">17:00</td><td class="medium weekend">1/8</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td></tr>
+<tr><td class="time">18:30</td><td class="medium weekend">1/5</td><td class="easy">1/1</td><td class="hard">1/22</td></tr>
+</table>
+</div></div>
+<div class="facility">
+<div class="facility-header" onclick="this.nextElementSibling.classList.toggle('collapsed')">富士見テニス場５ <span class="toggle">&#9660;</span></div>
+<div class="facility-body">
+<table>
+<tr><th>时段</th><th class="weekend">3/1(日)</th><th>3/2(月)</th><th>3/3(火)</th><th>3/4(水)</th><th>3/5(木)</th><th>3/6(金)</th><th class="weekend">3/7(土)</th></tr>
+<tr><td class="time">09:00</td><td class="unavailable weekend">-</td><td class="hard">1/52</td><td class="easy">1/2</td><td class="hard">1/12</td><td class="easy">1/2</td><td class="hard">1/27</td><td class="medium weekend">1/6</td></tr>
+<tr><td class="time">11:00</td><td class="unavailable weekend">-</td><td class="medium">1/6</td><td class="medium">1/4</td><td class="medium">1/5</td><td class="hard">1/12</td><td class="medium">1/6</td><td class="hard weekend">1/17</td></tr>
+<tr><td class="time">13:00</td><td class="unavailable weekend">-</td><td class="hot">&#9733;1/0</td><td class="medium">1/6</td><td class="hot">&#9733;1/0</td><td class="easy">1/3</td><td class="medium">1/6</td><td class="hard weekend">1/31</td></tr>
+<tr><td class="time">15:00</td><td class="unavailable weekend">-</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hard weekend">1/40</td></tr>
+<tr><td class="time">17:00</td><td class="unavailable weekend">-</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="easy weekend">1/2</td></tr>
+<tr><td class="time">18:30</td><td class="easy weekend">1/1</td><td class="easy">1/1</td><td class="hard">1/18</td><td class="medium">1/7</td><td class="hard">1/18</td><td class="hard">1/13</td><td class="hard weekend">1/40</td></tr>
+</table>
+<table>
+<tr><th>时段</th><th class="weekend">3/8(日)</th><th>3/9(月)</th><th>3/10(火)</th><th>3/11(水)</th><th>3/12(木)</th><th>3/13(金)</th><th class="weekend">3/14(土)</th></tr>
+<tr><td class="time">09:00</td><td class="hard weekend">1/15</td><td class="unavailable">-</td><td class="easy">1/2</td><td class="hard">1/14</td><td class="hard">1/28</td><td class="hard">1/27</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">11:00</td><td class="hard weekend">1/19</td><td class="unavailable">-</td><td class="medium">1/5</td><td class="medium">1/5</td><td class="hard">1/11</td><td class="easy">1/1</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">13:00</td><td class="medium weekend">1/5</td><td class="unavailable">-</td><td class="medium">1/5</td><td class="easy">1/2</td><td class="easy">1/1</td><td class="easy">1/3</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">15:00</td><td class="medium weekend">1/7</td><td class="unavailable">-</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="easy">1/1</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">17:00</td><td class="easy weekend">1/1</td><td class="unavailable">-</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="medium weekend">1/7</td></tr>
+<tr><td class="time">18:30</td><td class="easy weekend">1/1</td><td class="unavailable">-</td><td class="easy">1/1</td><td class="hard">1/19</td><td class="easy">1/3</td><td class="hard">1/15</td><td class="medium weekend">1/8</td></tr>
+</table>
+<table>
+<tr><th>时段</th><th class="weekend">3/15(日)</th><th>3/16(月)</th><th>3/17(火)</th><th>3/18(水)</th><th>3/19(木)</th><th>3/20(金)</th><th class="weekend">3/21(土)</th></tr>
+<tr><td class="time">09:00</td><td class="hard weekend">1/30</td><td class="hard">1/48</td><td class="easy">1/2</td><td class="hard">1/12</td><td class="medium">1/5</td><td class="medium">1/8</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">11:00</td><td class="hard weekend">1/13</td><td class="medium">1/5</td><td class="easy">1/2</td><td class="easy">1/3</td><td class="medium">1/6</td><td class="medium">1/7</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">13:00</td><td class="hard weekend">1/12</td><td class="easy">1/2</td><td class="medium">1/4</td><td class="easy">1/3</td><td class="easy">1/1</td><td class="hard">1/16</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">15:00</td><td class="medium weekend">1/6</td><td class="easy">1/2</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="medium">1/7</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">17:00</td><td class="easy weekend">1/1</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="easy">1/1</td><td class="medium weekend">1/4</td></tr>
+<tr><td class="time">18:30</td><td class="easy weekend">1/2</td><td class="hard">1/13</td><td class="hard">1/13</td><td class="easy">1/1</td><td class="hard">1/13</td><td class="easy">1/1</td><td class="medium weekend">1/5</td></tr>
+</table>
+<table>
+<tr><th>时段</th><th class="weekend">3/22(日)</th><th>3/23(月)</th><th>3/24(火)</th><th>3/25(水)</th><th>3/26(木)</th><th>3/27(金)</th><th class="weekend">3/28(土)</th></tr>
+<tr><td class="time">09:00</td><td class="unavailable weekend">-</td><td class="hard">1/44</td><td class="unavailable">-</td><td class="hard">1/12</td><td class="hard">1/15</td><td class="unavailable">-</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">11:00</td><td class="unavailable weekend">-</td><td class="easy">1/2</td><td class="unavailable">-</td><td class="medium">1/8</td><td class="hard">1/11</td><td class="unavailable">-</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">13:00</td><td class="unavailable weekend">-</td><td class="hot">&#9733;1/0</td><td class="unavailable">-</td><td class="medium">1/7</td><td class="easy">1/1</td><td class="unavailable">-</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">15:00</td><td class="unavailable weekend">-</td><td class="hot">&#9733;1/0</td><td class="unavailable">-</td><td class="easy">1/1</td><td class="easy">1/1</td><td class="unavailable">-</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">17:00</td><td class="easy weekend">1/1</td><td class="hot">&#9733;1/0</td><td class="unavailable">-</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="medium weekend">1/4</td></tr>
+<tr><td class="time">18:30</td><td class="easy weekend">1/2</td><td class="easy">1/1</td><td class="unavailable">-</td><td class="hard">1/13</td><td class="hard">1/24</td><td class="hard">1/16</td><td class="medium weekend">1/9</td></tr>
+</table>
+<table>
+<tr><th>时段</th><th class="weekend">3/29(日)</th><th>3/30(月)</th><th>3/31(火)</th></tr>
+<tr><td class="time">09:00</td><td class="unavailable weekend">-</td><td class="hard">1/44</td><td class="hard">1/27</td></tr>
+<tr><td class="time">11:00</td><td class="unavailable weekend">-</td><td class="medium">1/10</td><td class="easy">1/2</td></tr>
+<tr><td class="time">13:00</td><td class="unavailable weekend">-</td><td class="easy">1/1</td><td class="medium">1/4</td></tr>
+<tr><td class="time">15:00</td><td class="unavailable weekend">-</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td></tr>
+<tr><td class="time">17:00</td><td class="easy weekend">1/2</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td></tr>
+<tr><td class="time">18:30</td><td class="easy weekend">1/3</td><td class="easy">1/1</td><td class="easy">1/1</td></tr>
+</table>
+</div></div>
+<div class="facility">
+<div class="facility-header" onclick="this.nextElementSibling.classList.toggle('collapsed')">富士見テニス場６ <span class="toggle">&#9660;</span></div>
+<div class="facility-body">
+<table>
+<tr><th>时段</th><th class="weekend">3/1(日)</th><th>3/2(月)</th><th>3/3(火)</th><th>3/4(水)</th><th>3/5(木)</th><th>3/6(金)</th><th class="weekend">3/7(土)</th></tr>
+<tr><td class="time">09:00</td><td class="unavailable weekend">-</td><td class="hard">1/44</td><td class="hard">1/31</td><td class="hard">1/14</td><td class="hard">1/24</td><td class="hard">1/27</td><td class="hard weekend">1/13</td></tr>
+<tr><td class="time">11:00</td><td class="unavailable weekend">-</td><td class="medium">1/6</td><td class="hot">&#9733;1/0</td><td class="hard">1/17</td><td class="medium">1/6</td><td class="medium">1/6</td><td class="hard weekend">1/12</td></tr>
+<tr><td class="time">13:00</td><td class="unavailable weekend">-</td><td class="hot">&#9733;1/0</td><td class="easy">1/2</td><td class="hard">1/11</td><td class="easy">1/1</td><td class="easy">1/3</td><td class="hard weekend">1/19</td></tr>
+<tr><td class="time">15:00</td><td class="unavailable weekend">-</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="easy">1/1</td><td class="hot">&#9733;1/0</td><td class="easy">1/1</td><td class="hard weekend">1/12</td></tr>
+<tr><td class="time">17:00</td><td class="unavailable weekend">-</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="medium weekend">1/7</td></tr>
+<tr><td class="time">18:30</td><td class="easy weekend">1/3</td><td class="medium">1/5</td><td class="medium">1/5</td><td class="hard">1/15</td><td class="hard">1/24</td><td class="medium">1/7</td><td class="hard weekend">1/11</td></tr>
+</table>
+<table>
+<tr><th>时段</th><th class="weekend">3/8(日)</th><th>3/9(月)</th><th>3/10(火)</th><th>3/11(水)</th><th>3/12(木)</th><th>3/13(金)</th><th class="weekend">3/14(土)</th></tr>
+<tr><td class="time">09:00</td><td class="hard weekend">1/16</td><td class="unavailable">-</td><td class="hard">1/27</td><td class="hard">1/13</td><td class="hard">1/20</td><td class="hard">1/28</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">11:00</td><td class="hard weekend">1/11</td><td class="unavailable">-</td><td class="easy">1/1</td><td class="medium">1/6</td><td class="hard">1/14</td><td class="medium">1/7</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">13:00</td><td class="medium weekend">1/7</td><td class="unavailable">-</td><td class="easy">1/3</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="easy">1/3</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">15:00</td><td class="medium weekend">1/4</td><td class="unavailable">-</td><td class="hot">&#9733;1/0</td><td class="easy">1/2</td><td class="hot">&#9733;1/0</td><td class="medium">1/6</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">17:00</td><td class="easy weekend">1/2</td><td class="unavailable">-</td><td class="hot">&#9733;1/0</td><td class="easy">1/1</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="medium weekend">1/7</td></tr>
+<tr><td class="time">18:30</td><td class="easy weekend">1/2</td><td class="unavailable">-</td><td class="medium">1/5</td><td class="hard">1/14</td><td class="medium">1/4</td><td class="hard">1/42</td><td class="medium weekend">1/7</td></tr>
+</table>
+<table>
+<tr><th>时段</th><th class="weekend">3/15(日)</th><th>3/16(月)</th><th>3/17(火)</th><th>3/18(水)</th><th>3/19(木)</th><th>3/20(金)</th><th class="weekend">3/21(土)</th></tr>
+<tr><td class="time">09:00</td><td class="hard weekend">1/15</td><td class="hard">1/44</td><td class="hard">1/28</td><td class="hard">1/13</td><td class="hard">1/24</td><td class="medium">1/7</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">11:00</td><td class="hard weekend">1/14</td><td class="medium">1/6</td><td class="hot">&#9733;1/0</td><td class="hard">1/17</td><td class="medium">1/7</td><td class="hard">1/17</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">13:00</td><td class="hard weekend">1/15</td><td class="easy">1/2</td><td class="easy">1/2</td><td class="hard">1/11</td><td class="easy">1/2</td><td class="hard">1/17</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">15:00</td><td class="medium weekend">1/7</td><td class="easy">1/2</td><td class="hot">&#9733;1/0</td><td class="easy">1/1</td><td class="hot">&#9733;1/0</td><td class="hard">1/16</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">17:00</td><td class="easy weekend">1/1</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="easy">1/2</td><td class="easy weekend">1/2</td></tr>
+<tr><td class="time">18:30</td><td class="easy weekend">1/2</td><td class="medium">1/4</td><td class="medium">1/4</td><td class="medium">1/8</td><td class="hard">1/53</td><td class="easy">1/2</td><td class="easy weekend">1/2</td></tr>
+</table>
+<table>
+<tr><th>时段</th><th class="weekend">3/22(日)</th><th>3/23(月)</th><th>3/24(火)</th><th>3/25(水)</th><th>3/26(木)</th><th>3/27(金)</th><th class="weekend">3/28(土)</th></tr>
+<tr><td class="time">09:00</td><td class="unavailable weekend">-</td><td class="hard">1/44</td><td class="unavailable">-</td><td class="hard">1/13</td><td class="hard">1/25</td><td class="unavailable">-</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">11:00</td><td class="unavailable weekend">-</td><td class="medium">1/6</td><td class="unavailable">-</td><td class="hard">1/11</td><td class="hard">1/28</td><td class="unavailable">-</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">13:00</td><td class="unavailable weekend">-</td><td class="hot">&#9733;1/0</td><td class="unavailable">-</td><td class="easy">1/3</td><td class="easy">1/1</td><td class="unavailable">-</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">15:00</td><td class="unavailable weekend">-</td><td class="hot">&#9733;1/0</td><td class="unavailable">-</td><td class="easy">1/1</td><td class="hot">&#9733;1/0</td><td class="unavailable">-</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">17:00</td><td class="hot weekend">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="unavailable">-</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="medium weekend">1/6</td></tr>
+<tr><td class="time">18:30</td><td class="medium weekend">1/8</td><td class="easy">1/3</td><td class="unavailable">-</td><td class="hard">1/35</td><td class="medium">1/9</td><td class="hard">1/42</td><td class="medium weekend">1/5</td></tr>
+</table>
+<table>
+<tr><th>时段</th><th class="weekend">3/29(日)</th><th>3/30(月)</th><th>3/31(火)</th></tr>
+<tr><td class="time">09:00</td><td class="unavailable weekend">-</td><td class="hard">1/44</td><td class="hard">1/28</td></tr>
+<tr><td class="time">11:00</td><td class="unavailable weekend">-</td><td class="medium">1/7</td><td class="hot">&#9733;1/0</td></tr>
+<tr><td class="time">13:00</td><td class="unavailable weekend">-</td><td class="easy">1/1</td><td class="easy">1/2</td></tr>
+<tr><td class="time">15:00</td><td class="unavailable weekend">-</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td></tr>
+<tr><td class="time">17:00</td><td class="easy weekend">1/1</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td></tr>
+<tr><td class="time">18:30</td><td class="easy weekend">1/3</td><td class="easy">1/3</td><td class="medium">1/7</td></tr>
+</table>
+</div></div>
+<div class="facility">
+<div class="facility-header" onclick="this.nextElementSibling.classList.toggle('collapsed')">富士見テニス場７ <span class="toggle">&#9660;</span></div>
+<div class="facility-body">
+<table>
+<tr><th>时段</th><th class="weekend">3/1(日)</th><th>3/2(月)</th><th>3/3(火)</th><th>3/4(水)</th><th>3/5(木)</th><th>3/6(金)</th><th class="weekend">3/7(土)</th></tr>
+<tr><td class="time">09:00</td><td class="unavailable weekend">-</td><td class="easy">1/1</td><td class="hard">1/14</td><td class="hard">1/42</td><td class="hard">1/30</td><td class="hard">1/25</td><td class="medium weekend">1/8</td></tr>
+<tr><td class="time">11:00</td><td class="unavailable weekend">-</td><td class="medium">1/6</td><td class="hard">1/25</td><td class="hard">1/52</td><td class="hard">1/23</td><td class="hard">1/30</td><td class="hard weekend">1/24</td></tr>
+<tr><td class="time">13:00</td><td class="unavailable weekend">-</td><td class="easy">1/1</td><td class="medium">1/5</td><td class="hard">1/27</td><td class="medium">1/8</td><td class="medium">1/4</td><td class="hard weekend">1/26</td></tr>
+<tr><td class="time">15:00</td><td class="unavailable weekend">-</td><td class="easy">1/1</td><td class="hot">&#9733;1/0</td><td class="easy">1/1</td><td class="medium">1/5</td><td class="easy">1/1</td><td class="hard weekend">1/13</td></tr>
+<tr><td class="time">17:00</td><td class="unavailable weekend">-</td><td class="hot">&#9733;1/0</td><td class="easy">1/1</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="easy weekend">1/3</td></tr>
+<tr><td class="time">18:30</td><td class="easy weekend">1/3</td><td class="medium">1/6</td><td class="hard">1/22</td><td class="hard">1/43</td><td class="hard">1/24</td><td class="hard">1/34</td><td class="medium weekend">1/5</td></tr>
+</table>
+<table>
+<tr><th>时段</th><th class="weekend">3/8(日)</th><th>3/9(月)</th><th>3/10(火)</th><th>3/11(水)</th><th>3/12(木)</th><th>3/13(金)</th><th class="weekend">3/14(土)</th></tr>
+<tr><td class="time">09:00</td><td class="hard weekend">1/14</td><td class="unavailable">-</td><td class="hard">1/19</td><td class="hard">1/19</td><td class="hard">1/23</td><td class="hard">1/20</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">11:00</td><td class="hard weekend">1/20</td><td class="unavailable">-</td><td class="hard">1/20</td><td class="hard">1/22</td><td class="hard">1/24</td><td class="hard">1/25</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">13:00</td><td class="hard weekend">1/19</td><td class="unavailable">-</td><td class="medium">1/8</td><td class="hard">1/17</td><td class="medium">1/6</td><td class="hard">1/13</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">15:00</td><td class="medium weekend">1/9</td><td class="unavailable">-</td><td class="hot">&#9733;1/0</td><td class="easy">1/2</td><td class="easy">1/1</td><td class="easy">1/2</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">17:00</td><td class="easy weekend">1/1</td><td class="unavailable">-</td><td class="hot">&#9733;1/0</td><td class="easy">1/1</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="easy weekend">1/3</td></tr>
+<tr><td class="time">18:30</td><td class="easy weekend">1/2</td><td class="unavailable">-</td><td class="medium">1/4</td><td class="hard">1/42</td><td class="hard">1/25</td><td class="hard">1/35</td><td class="medium weekend">1/8</td></tr>
+</table>
+<table>
+<tr><th>时段</th><th class="weekend">3/15(日)</th><th>3/16(月)</th><th>3/17(火)</th><th>3/18(水)</th><th>3/19(木)</th><th>3/20(金)</th><th class="weekend">3/21(土)</th></tr>
+<tr><td class="time">09:00</td><td class="hard weekend">1/14</td><td class="easy">1/1</td><td class="hard">1/19</td><td class="hard">1/34</td><td class="hard">1/30</td><td class="hard">1/13</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">11:00</td><td class="hard weekend">1/21</td><td class="medium">1/6</td><td class="hard">1/20</td><td class="hard">1/17</td><td class="hard">1/29</td><td class="hard">1/17</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">13:00</td><td class="hard weekend">1/13</td><td class="easy">1/1</td><td class="medium">1/6</td><td class="hard">1/19</td><td class="medium">1/4</td><td class="hard">1/14</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">15:00</td><td class="hard weekend">1/17</td><td class="easy">1/1</td><td class="easy">1/2</td><td class="easy">1/1</td><td class="medium">1/4</td><td class="hard">1/13</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">17:00</td><td class="easy weekend">1/1</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="easy">1/1</td><td class="medium weekend">1/4</td></tr>
+<tr><td class="time">18:30</td><td class="easy weekend">1/3</td><td class="hard">1/27</td><td class="hard">1/24</td><td class="hard">1/35</td><td class="hard">1/27</td><td class="easy">1/2</td><td class="easy weekend">1/3</td></tr>
+</table>
+<table>
+<tr><th>时段</th><th class="weekend">3/22(日)</th><th>3/23(月)</th><th>3/24(火)</th><th>3/25(水)</th><th>3/26(木)</th><th>3/27(金)</th><th class="weekend">3/28(土)</th></tr>
+<tr><td class="time">09:00</td><td class="unavailable weekend">-</td><td class="easy">1/1</td><td class="unavailable">-</td><td class="hard">1/23</td><td class="hard">1/33</td><td class="unavailable">-</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">11:00</td><td class="unavailable weekend">-</td><td class="medium">1/6</td><td class="unavailable">-</td><td class="hard">1/52</td><td class="hard">1/23</td><td class="unavailable">-</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">13:00</td><td class="unavailable weekend">-</td><td class="easy">1/2</td><td class="unavailable">-</td><td class="hard">1/28</td><td class="easy">1/3</td><td class="unavailable">-</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">15:00</td><td class="unavailable weekend">-</td><td class="medium">1/5</td><td class="unavailable">-</td><td class="easy">1/1</td><td class="easy">1/2</td><td class="unavailable">-</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">17:00</td><td class="medium weekend">1/4</td><td class="hot">&#9733;1/0</td><td class="unavailable">-</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="easy weekend">1/2</td></tr>
+<tr><td class="time">18:30</td><td class="medium weekend">1/5</td><td class="medium">1/9</td><td class="unavailable">-</td><td class="hard">1/59</td><td class="hard">1/25</td><td class="hard">1/17</td><td class="easy weekend">1/3</td></tr>
+</table>
+<table>
+<tr><th>时段</th><th class="weekend">3/29(日)</th><th>3/30(月)</th><th>3/31(火)</th></tr>
+<tr><td class="time">09:00</td><td class="unavailable weekend">-</td><td class="easy">1/1</td><td class="hard">1/32</td></tr>
+<tr><td class="time">11:00</td><td class="unavailable weekend">-</td><td class="medium">1/7</td><td class="hard">1/26</td></tr>
+<tr><td class="time">13:00</td><td class="unavailable weekend">-</td><td class="easy">1/3</td><td class="medium">1/5</td></tr>
+<tr><td class="time">15:00</td><td class="unavailable weekend">-</td><td class="easy">1/1</td><td class="hot">&#9733;1/0</td></tr>
+<tr><td class="time">17:00</td><td class="easy weekend">1/3</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td></tr>
+<tr><td class="time">18:30</td><td class="easy weekend">1/2</td><td class="hard">1/25</td><td class="medium">1/9</td></tr>
+</table>
+</div></div>
+<div class="facility">
+<div class="facility-header" onclick="this.nextElementSibling.classList.toggle('collapsed')">富士見テニス場８ <span class="toggle">&#9660;</span></div>
+<div class="facility-body">
+<table>
+<tr><th>时段</th><th class="weekend">3/1(日)</th><th>3/2(月)</th><th>3/3(火)</th><th>3/4(水)</th><th>3/5(木)</th><th>3/6(金)</th><th class="weekend">3/7(土)</th></tr>
+<tr><td class="time">09:00</td><td class="unavailable weekend">-</td><td class="hard">1/14</td><td class="hard">1/46</td><td class="hard">1/41</td><td class="medium">1/6</td><td class="hard">1/68</td><td class="medium weekend">1/9</td></tr>
+<tr><td class="time">11:00</td><td class="unavailable weekend">-</td><td class="easy">1/2</td><td class="hard">1/20</td><td class="hard">1/13</td><td class="hard">1/79</td><td class="hard">1/16</td><td class="hard weekend">1/14</td></tr>
+<tr><td class="time">13:00</td><td class="unavailable weekend">-</td><td class="easy">1/1</td><td class="hard">1/22</td><td class="hard">1/12</td><td class="hard">1/11</td><td class="medium">1/7</td><td class="hard weekend">1/11</td></tr>
+<tr><td class="time">15:00</td><td class="unavailable weekend">-</td><td class="hot">&#9733;1/0</td><td class="medium">1/4</td><td class="easy">1/1</td><td class="easy">1/1</td><td class="easy">1/1</td><td class="hard weekend">1/12</td></tr>
+<tr><td class="time">17:00</td><td class="unavailable weekend">-</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="easy weekend">1/2</td></tr>
+<tr><td class="time">18:30</td><td class="medium weekend">1/4</td><td class="hard">1/19</td><td class="medium">1/6</td><td class="hard">1/24</td><td class="hard">1/35</td><td class="hard">1/25</td><td class="easy weekend">1/3</td></tr>
+</table>
+<table>
+<tr><th>时段</th><th class="weekend">3/8(日)</th><th>3/9(月)</th><th>3/10(火)</th><th>3/11(水)</th><th>3/12(木)</th><th>3/13(金)</th><th class="weekend">3/14(土)</th></tr>
+<tr><td class="time">09:00</td><td class="hard weekend">1/23</td><td class="unavailable">-</td><td class="hard">1/40</td><td class="hard">1/20</td><td class="hard">1/55</td><td class="hard">1/31</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">11:00</td><td class="medium weekend">1/8</td><td class="unavailable">-</td><td class="hard">1/20</td><td class="hard">1/15</td><td class="hard">1/79</td><td class="hard">1/16</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">13:00</td><td class="medium weekend">1/9</td><td class="unavailable">-</td><td class="hard">1/22</td><td class="easy">1/2</td><td class="easy">1/1</td><td class="medium">1/10</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">15:00</td><td class="medium weekend">1/7</td><td class="unavailable">-</td><td class="easy">1/2</td><td class="easy">1/1</td><td class="easy">1/2</td><td class="easy">1/1</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">17:00</td><td class="hot weekend">&#9733;1/0</td><td class="unavailable">-</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="easy weekend">1/3</td></tr>
+<tr><td class="time">18:30</td><td class="easy weekend">1/2</td><td class="unavailable">-</td><td class="medium">1/5</td><td class="hard">1/21</td><td class="hard">1/39</td><td class="hard">1/70</td><td class="hard weekend">1/16</td></tr>
+</table>
+<table>
+<tr><th>时段</th><th class="weekend">3/15(日)</th><th>3/16(月)</th><th>3/17(火)</th><th>3/18(水)</th><th>3/19(木)</th><th>3/20(金)</th><th class="weekend">3/21(土)</th></tr>
+<tr><td class="time">09:00</td><td class="hard weekend">1/21</td><td class="hard">1/19</td><td class="hard">1/40</td><td class="hard">1/25</td><td class="easy">1/1</td><td class="hard">1/23</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">11:00</td><td class="hard weekend">1/17</td><td class="medium">1/4</td><td class="hard">1/21</td><td class="hard">1/16</td><td class="hard">1/31</td><td class="hard">1/14</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">13:00</td><td class="hard weekend">1/17</td><td class="medium">1/7</td><td class="hard">1/23</td><td class="hard">1/12</td><td class="hard">1/28</td><td class="medium">1/10</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">15:00</td><td class="medium weekend">1/6</td><td class="hot">&#9733;1/0</td><td class="medium">1/4</td><td class="easy">1/1</td><td class="hot">&#9733;1/0</td><td class="hard">1/12</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">17:00</td><td class="hard weekend">1/13</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="easy">1/2</td><td class="medium weekend">1/4</td></tr>
+<tr><td class="time">18:30</td><td class="hard weekend">1/13</td><td class="hard">1/22</td><td class="medium">1/5</td><td class="hard">1/24</td><td class="hard">1/59</td><td class="easy">1/2</td><td class="medium weekend">1/4</td></tr>
+</table>
+<table>
+<tr><th>时段</th><th class="weekend">3/22(日)</th><th>3/23(月)</th><th>3/24(火)</th><th>3/25(水)</th><th>3/26(木)</th><th>3/27(金)</th><th class="weekend">3/28(土)</th></tr>
+<tr><td class="time">09:00</td><td class="unavailable weekend">-</td><td class="hard">1/21</td><td class="unavailable">-</td><td class="hard">1/35</td><td class="hard">1/49</td><td class="unavailable">-</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">11:00</td><td class="unavailable weekend">-</td><td class="medium">1/6</td><td class="unavailable">-</td><td class="hard">1/16</td><td class="hard">1/41</td><td class="unavailable">-</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">13:00</td><td class="unavailable weekend">-</td><td class="medium">1/8</td><td class="unavailable">-</td><td class="hard">1/17</td><td class="easy">1/2</td><td class="unavailable">-</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">15:00</td><td class="unavailable weekend">-</td><td class="hot">&#9733;1/0</td><td class="unavailable">-</td><td class="easy">1/1</td><td class="easy">1/2</td><td class="unavailable">-</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">17:00</td><td class="medium weekend">1/4</td><td class="hot">&#9733;1/0</td><td class="unavailable">-</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="easy weekend">1/2</td></tr>
+<tr><td class="time">18:30</td><td class="easy weekend">1/1</td><td class="hard">1/23</td><td class="unavailable">-</td><td class="hard">1/53</td><td class="hard">1/39</td><td class="hard">1/70</td><td class="easy weekend">1/3</td></tr>
+</table>
+<table>
+<tr><th>时段</th><th class="weekend">3/29(日)</th><th>3/30(月)</th><th>3/31(火)</th></tr>
+<tr><td class="time">09:00</td><td class="unavailable weekend">-</td><td class="hard">1/22</td><td class="hard">1/37</td></tr>
+<tr><td class="time">11:00</td><td class="unavailable weekend">-</td><td class="medium">1/5</td><td class="hard">1/27</td></tr>
+<tr><td class="time">13:00</td><td class="unavailable weekend">-</td><td class="hard">1/12</td><td class="hard">1/22</td></tr>
+<tr><td class="time">15:00</td><td class="unavailable weekend">-</td><td class="easy">1/1</td><td class="easy">1/3</td></tr>
+<tr><td class="time">17:00</td><td class="easy weekend">1/1</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td></tr>
+<tr><td class="time">18:30</td><td class="easy weekend">1/3</td><td class="hard">1/19</td><td class="easy">1/2</td></tr>
+</table>
+</div></div>
+<div class="facility">
+<div class="facility-header" onclick="this.nextElementSibling.classList.toggle('collapsed')">富士見テニス場９ <span class="toggle">&#9660;</span></div>
+<div class="facility-body">
+<table>
+<tr><th>时段</th><th class="weekend">3/1(日)</th><th>3/2(月)</th><th>3/3(火)</th><th>3/4(水)</th><th>3/5(木)</th><th>3/6(金)</th><th class="weekend">3/7(土)</th></tr>
+<tr><td class="time">09:00</td><td class="unavailable weekend">-</td><td class="hard">1/14</td><td class="hard">1/22</td><td class="medium">1/8</td><td class="hard">1/26</td><td class="hard">1/32</td><td class="hard weekend">1/11</td></tr>
+<tr><td class="time">11:00</td><td class="unavailable weekend">-</td><td class="medium">1/9</td><td class="hard">1/15</td><td class="easy">1/1</td><td class="hard">1/15</td><td class="medium">1/6</td><td class="hard weekend">1/19</td></tr>
+<tr><td class="time">13:00</td><td class="unavailable weekend">-</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="easy">1/3</td><td class="hot">&#9733;1/0</td><td class="easy">1/1</td><td class="hard weekend">1/11</td></tr>
+<tr><td class="time">15:00</td><td class="unavailable weekend">-</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="easy">1/2</td><td class="hard weekend">1/17</td></tr>
+<tr><td class="time">17:00</td><td class="unavailable weekend">-</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="easy weekend">1/2</td></tr>
+<tr><td class="time">18:30</td><td class="easy weekend">1/1</td><td class="hard">1/17</td><td class="medium">1/6</td><td class="medium">1/9</td><td class="hard">1/18</td><td class="hard">1/18</td><td class="medium weekend">1/6</td></tr>
+</table>
+<table>
+<tr><th>时段</th><th class="weekend">3/8(日)</th><th>3/9(月)</th><th>3/10(火)</th><th>3/11(水)</th><th>3/12(木)</th><th>3/13(金)</th><th class="weekend">3/14(土)</th></tr>
+<tr><td class="time">09:00</td><td class="hard weekend">1/23</td><td class="unavailable">-</td><td class="hard">1/22</td><td class="hot">&#9733;1/0</td><td class="hard">1/51</td><td class="hard">1/34</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">11:00</td><td class="hard weekend">1/25</td><td class="unavailable">-</td><td class="hard">1/15</td><td class="easy">1/1</td><td class="hard">1/16</td><td class="easy">1/1</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">13:00</td><td class="hard weekend">1/21</td><td class="unavailable">-</td><td class="medium">1/7</td><td class="easy">1/1</td><td class="hot">&#9733;1/0</td><td class="easy">1/1</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">15:00</td><td class="medium weekend">1/10</td><td class="unavailable">-</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="easy">1/1</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">17:00</td><td class="easy weekend">1/1</td><td class="unavailable">-</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="medium weekend">1/7</td></tr>
+<tr><td class="time">18:30</td><td class="easy weekend">1/2</td><td class="unavailable">-</td><td class="medium">1/4</td><td class="hard">1/29</td><td class="medium">1/5</td><td class="hard">1/25</td><td class="hard weekend">1/19</td></tr>
+</table>
+<table>
+<tr><th>时段</th><th class="weekend">3/15(日)</th><th>3/16(月)</th><th>3/17(火)</th><th>3/18(水)</th><th>3/19(木)</th><th>3/20(金)</th><th class="weekend">3/21(土)</th></tr>
+<tr><td class="time">09:00</td><td class="hard weekend">1/18</td><td class="hard">1/15</td><td class="hard">1/22</td><td class="medium">1/8</td><td class="hard">1/26</td><td class="medium">1/9</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">11:00</td><td class="hard weekend">1/15</td><td class="medium">1/9</td><td class="hard">1/19</td><td class="hot">&#9733;1/0</td><td class="hard">1/15</td><td class="medium">1/6</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">13:00</td><td class="hard weekend">1/16</td><td class="hot">&#9733;1/0</td><td class="medium">1/6</td><td class="medium">1/7</td><td class="easy">1/2</td><td class="medium">1/7</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">15:00</td><td class="hard weekend">1/16</td><td class="hot">&#9733;1/0</td><td class="easy">1/2</td><td class="easy">1/1</td><td class="hot">&#9733;1/0</td><td class="medium">1/10</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">17:00</td><td class="hard weekend">1/13</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="easy">1/1</td><td class="easy weekend">1/2</td></tr>
+<tr><td class="time">18:30</td><td class="hard weekend">1/13</td><td class="hard">1/44</td><td class="medium">1/5</td><td class="hard">1/33</td><td class="hard">1/41</td><td class="easy">1/2</td><td class="easy weekend">1/3</td></tr>
+</table>
+<table>
+<tr><th>时段</th><th class="weekend">3/22(日)</th><th>3/23(月)</th><th>3/24(火)</th><th>3/25(水)</th><th>3/26(木)</th><th>3/27(金)</th><th class="weekend">3/28(土)</th></tr>
+<tr><td class="time">09:00</td><td class="unavailable weekend">-</td><td class="hard">1/13</td><td class="unavailable">-</td><td class="medium">1/7</td><td class="hard">1/46</td><td class="unavailable">-</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">11:00</td><td class="unavailable weekend">-</td><td class="medium">1/9</td><td class="unavailable">-</td><td class="hard">1/12</td><td class="hard">1/13</td><td class="unavailable">-</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">13:00</td><td class="unavailable weekend">-</td><td class="hot">&#9733;1/0</td><td class="unavailable">-</td><td class="hard">1/12</td><td class="easy">1/1</td><td class="unavailable">-</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">15:00</td><td class="unavailable weekend">-</td><td class="hot">&#9733;1/0</td><td class="unavailable">-</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="unavailable">-</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">17:00</td><td class="easy weekend">1/2</td><td class="hot">&#9733;1/0</td><td class="unavailable">-</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="medium weekend">1/6</td></tr>
+<tr><td class="time">18:30</td><td class="easy weekend">1/3</td><td class="hard">1/18</td><td class="unavailable">-</td><td class="hard">1/55</td><td class="hard">1/31</td><td class="hard">1/35</td><td class="easy weekend">1/3</td></tr>
+</table>
+<table>
+<tr><th>时段</th><th class="weekend">3/29(日)</th><th>3/30(月)</th><th>3/31(火)</th></tr>
+<tr><td class="time">09:00</td><td class="unavailable weekend">-</td><td class="hard">1/14</td><td class="hard">1/22</td></tr>
+<tr><td class="time">11:00</td><td class="unavailable weekend">-</td><td class="medium">1/10</td><td class="hard">1/19</td></tr>
+<tr><td class="time">13:00</td><td class="unavailable weekend">-</td><td class="easy">1/1</td><td class="easy">1/1</td></tr>
+<tr><td class="time">15:00</td><td class="unavailable weekend">-</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td></tr>
+<tr><td class="time">17:00</td><td class="easy weekend">1/2</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td></tr>
+<tr><td class="time">18:30</td><td class="easy weekend">1/2</td><td class="hard">1/18</td><td class="easy">1/2</td></tr>
+</table>
+</div></div>
+<div class="facility">
+<div class="facility-header" onclick="this.nextElementSibling.classList.toggle('collapsed')">富士見テニス場１０ <span class="toggle">&#9660;</span></div>
+<div class="facility-body">
+<table>
+<tr><th>时段</th><th class="weekend">3/1(日)</th><th>3/2(月)</th><th>3/3(火)</th><th>3/4(水)</th><th>3/5(木)</th><th>3/6(金)</th><th class="weekend">3/7(土)</th></tr>
+<tr><td class="time">09:00</td><td class="unavailable weekend">-</td><td class="hard">1/12</td><td class="hard">1/44</td><td class="hard">1/15</td><td class="easy">1/3</td><td class="hard">1/33</td><td class="medium weekend">1/10</td></tr>
+<tr><td class="time">11:00</td><td class="unavailable weekend">-</td><td class="medium">1/9</td><td class="hard">1/12</td><td class="hot">&#9733;1/0</td><td class="hard">1/26</td><td class="hot">&#9733;1/0</td><td class="medium weekend">1/10</td></tr>
+<tr><td class="time">13:00</td><td class="unavailable weekend">-</td><td class="hot">&#9733;1/0</td><td class="medium">1/10</td><td class="hot">&#9733;1/0</td><td class="easy">1/1</td><td class="easy">1/1</td><td class="medium weekend">1/10</td></tr>
+<tr><td class="time">15:00</td><td class="unavailable weekend">-</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="easy">1/1</td><td class="easy">1/1</td><td class="medium weekend">1/9</td></tr>
+<tr><td class="time">17:00</td><td class="unavailable weekend">-</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="easy weekend">1/2</td></tr>
+<tr><td class="time">18:30</td><td class="easy weekend">1/1</td><td class="medium">1/6</td><td class="medium">1/5</td><td class="hard">1/34</td><td class="easy">1/3</td><td class="hard">1/29</td><td class="easy weekend">1/3</td></tr>
+</table>
+<table>
+<tr><th>时段</th><th class="weekend">3/8(日)</th><th>3/9(月)</th><th>3/10(火)</th><th>3/11(水)</th><th>3/12(木)</th><th>3/13(金)</th><th class="weekend">3/14(土)</th></tr>
+<tr><td class="time">09:00</td><td class="hard weekend">1/11</td><td class="unavailable">-</td><td class="hard">1/44</td><td class="hard">1/26</td><td class="hard">1/46</td><td class="hard">1/34</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">11:00</td><td class="hard weekend">1/22</td><td class="unavailable">-</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hard">1/27</td><td class="medium">1/6</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">13:00</td><td class="hard weekend">1/21</td><td class="unavailable">-</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="easy">1/1</td><td class="easy">1/1</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">15:00</td><td class="medium weekend">1/5</td><td class="unavailable">-</td><td class="hot">&#9733;1/0</td><td class="easy">1/1</td><td class="easy">1/1</td><td class="easy">1/2</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">17:00</td><td class="easy weekend">1/1</td><td class="unavailable">-</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="easy weekend">1/2</td></tr>
+<tr><td class="time">18:30</td><td class="easy weekend">1/1</td><td class="unavailable">-</td><td class="medium">1/8</td><td class="hard">1/35</td><td class="medium">1/7</td><td class="hard">1/30</td><td class="hard weekend">1/16</td></tr>
+</table>
+<table>
+<tr><th>时段</th><th class="weekend">3/15(日)</th><th>3/16(月)</th><th>3/17(火)</th><th>3/18(水)</th><th>3/19(木)</th><th>3/20(金)</th><th class="weekend">3/21(土)</th></tr>
+<tr><td class="time">09:00</td><td class="hard weekend">1/14</td><td class="hard">1/11</td><td class="hard">1/44</td><td class="hot">&#9733;1/0</td><td class="easy">1/3</td><td class="hard">1/13</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">11:00</td><td class="hard weekend">1/14</td><td class="medium">1/9</td><td class="easy">1/2</td><td class="hot">&#9733;1/0</td><td class="hard">1/28</td><td class="hard">1/11</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">13:00</td><td class="hard weekend">1/11</td><td class="hot">&#9733;1/0</td><td class="easy">1/2</td><td class="hard">1/17</td><td class="easy">1/2</td><td class="hard">1/11</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">15:00</td><td class="medium weekend">1/8</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="easy">1/1</td><td class="medium">1/5</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">17:00</td><td class="hard weekend">1/13</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="easy">1/1</td><td class="medium weekend">1/4</td></tr>
+<tr><td class="time">18:30</td><td class="hard weekend">1/13</td><td class="medium">1/8</td><td class="hard">1/18</td><td class="hard">1/33</td><td class="hard">1/50</td><td class="easy">1/2</td><td class="medium weekend">1/8</td></tr>
+</table>
+<table>
+<tr><th>时段</th><th class="weekend">3/22(日)</th><th>3/23(月)</th><th>3/24(火)</th><th>3/25(水)</th><th>3/26(木)</th><th>3/27(金)</th><th class="weekend">3/28(土)</th></tr>
+<tr><td class="time">09:00</td><td class="unavailable weekend">-</td><td class="medium">1/10</td><td class="unavailable">-</td><td class="hard">1/66</td><td class="hard">1/43</td><td class="unavailable">-</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">11:00</td><td class="unavailable weekend">-</td><td class="medium">1/10</td><td class="unavailable">-</td><td class="easy">1/2</td><td class="medium">1/4</td><td class="unavailable">-</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">13:00</td><td class="unavailable weekend">-</td><td class="hot">&#9733;1/0</td><td class="unavailable">-</td><td class="hard">1/17</td><td class="easy">1/1</td><td class="unavailable">-</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">15:00</td><td class="unavailable weekend">-</td><td class="easy">1/1</td><td class="unavailable">-</td><td class="hot">&#9733;1/0</td><td class="easy">1/1</td><td class="unavailable">-</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">17:00</td><td class="easy weekend">1/3</td><td class="hot">&#9733;1/0</td><td class="unavailable">-</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="easy weekend">1/3</td></tr>
+<tr><td class="time">18:30</td><td class="easy weekend">1/2</td><td class="medium">1/6</td><td class="unavailable">-</td><td class="hard">1/33</td><td class="hard">1/45</td><td class="medium">1/8</td><td class="medium weekend">1/8</td></tr>
+</table>
+<table>
+<tr><th>时段</th><th class="weekend">3/29(日)</th><th>3/30(月)</th><th>3/31(火)</th></tr>
+<tr><td class="time">09:00</td><td class="unavailable weekend">-</td><td class="medium">1/10</td><td class="hard">1/44</td></tr>
+<tr><td class="time">11:00</td><td class="unavailable weekend">-</td><td class="unavailable">-</td><td class="medium">1/9</td></tr>
+<tr><td class="time">13:00</td><td class="unavailable weekend">-</td><td class="unavailable">-</td><td class="medium">1/9</td></tr>
+<tr><td class="time">15:00</td><td class="unavailable weekend">-</td><td class="easy">1/1</td><td class="hot">&#9733;1/0</td></tr>
+<tr><td class="time">17:00</td><td class="easy weekend">1/3</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td></tr>
+<tr><td class="time">18:30</td><td class="medium weekend">1/5</td><td class="medium">1/4</td><td class="easy">1/2</td></tr>
+</table>
+</div></div>
+<div class="facility">
+<div class="facility-header" onclick="this.nextElementSibling.classList.toggle('collapsed')">富士見テニス場１１ <span class="toggle">&#9660;</span></div>
+<div class="facility-body">
+<table>
+<tr><th>时段</th><th class="weekend">3/1(日)</th><th>3/2(月)</th><th>3/3(火)</th><th>3/4(水)</th><th>3/5(木)</th><th>3/6(金)</th><th class="weekend">3/7(土)</th></tr>
+<tr><td class="time">09:00</td><td class="unavailable weekend">-</td><td class="easy">1/1</td><td class="hard">1/27</td><td class="easy">1/3</td><td class="easy">1/1</td><td class="hard">1/20</td><td class="medium weekend">1/7</td></tr>
+<tr><td class="time">11:00</td><td class="unavailable weekend">-</td><td class="hot">&#9733;1/0</td><td class="easy">1/1</td><td class="hot">&#9733;1/0</td><td class="medium">1/5</td><td class="easy">1/3</td><td class="hard weekend">1/21</td></tr>
+<tr><td class="time">13:00</td><td class="unavailable weekend">-</td><td class="hot">&#9733;1/0</td><td class="easy">1/1</td><td class="hot">&#9733;1/0</td><td class="easy">1/2</td><td class="easy">1/2</td><td class="hard weekend">1/12</td></tr>
+<tr><td class="time">15:00</td><td class="unavailable weekend">-</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hard">1/22</td><td class="hot">&#9733;1/0</td><td class="easy">1/3</td><td class="hard weekend">1/15</td></tr>
+<tr><td class="time">17:00</td><td class="unavailable weekend">-</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="easy weekend">1/2</td></tr>
+<tr><td class="time">18:30</td><td class="easy weekend">1/2</td><td class="medium">1/9</td><td class="medium">1/8</td><td class="hard">1/30</td><td class="hard">1/26</td><td class="hard">1/24</td><td class="easy weekend">1/2</td></tr>
+</table>
+<table>
+<tr><th>时段</th><th class="weekend">3/8(日)</th><th>3/9(月)</th><th>3/10(火)</th><th>3/11(水)</th><th>3/12(木)</th><th>3/13(金)</th><th class="weekend">3/14(土)</th></tr>
+<tr><td class="time">09:00</td><td class="hard weekend">1/14</td><td class="unavailable">-</td><td class="hard">1/27</td><td class="hot">&#9733;1/0</td><td class="hard">1/14</td><td class="hard">1/11</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">11:00</td><td class="medium weekend">1/8</td><td class="unavailable">-</td><td class="easy">1/1</td><td class="hot">&#9733;1/0</td><td class="hard">1/12</td><td class="hard">1/14</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">13:00</td><td class="medium weekend">1/4</td><td class="unavailable">-</td><td class="easy">1/1</td><td class="hot">&#9733;1/0</td><td class="easy">1/3</td><td class="hard">1/13</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">15:00</td><td class="easy weekend">1/3</td><td class="unavailable">-</td><td class="hot">&#9733;1/0</td><td class="easy">1/3</td><td class="easy">1/3</td><td class="medium">1/4</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">17:00</td><td class="easy weekend">1/1</td><td class="unavailable">-</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="easy weekend">1/2</td></tr>
+<tr><td class="time">18:30</td><td class="easy weekend">1/1</td><td class="unavailable">-</td><td class="easy">1/3</td><td class="hard">1/12</td><td class="hard">1/18</td><td class="hard">1/25</td><td class="hard weekend">1/16</td></tr>
+</table>
+<table>
+<tr><th>时段</th><th class="weekend">3/15(日)</th><th>3/16(月)</th><th>3/17(火)</th><th>3/18(水)</th><th>3/19(木)</th><th>3/20(金)</th><th class="weekend">3/21(土)</th></tr>
+<tr><td class="time">09:00</td><td class="hard weekend">1/13</td><td class="medium">1/5</td><td class="hard">1/27</td><td class="hard">1/15</td><td class="hard">1/23</td><td class="medium">1/5</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">11:00</td><td class="hard weekend">1/17</td><td class="hot">&#9733;1/0</td><td class="easy">1/3</td><td class="hot">&#9733;1/0</td><td class="hard">1/16</td><td class="medium">1/9</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">13:00</td><td class="hard weekend">1/14</td><td class="hot">&#9733;1/0</td><td class="easy">1/3</td><td class="easy">1/1</td><td class="medium">1/9</td><td class="medium">1/9</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">15:00</td><td class="medium weekend">1/8</td><td class="hot">&#9733;1/0</td><td class="easy">1/2</td><td class="easy">1/1</td><td class="hot">&#9733;1/0</td><td class="medium">1/4</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">17:00</td><td class="hard weekend">1/13</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="easy">1/1</td><td class="easy weekend">1/3</td></tr>
+<tr><td class="time">18:30</td><td class="hard weekend">1/13</td><td class="hard">1/18</td><td class="medium">1/7</td><td class="hard">1/11</td><td class="hard">1/19</td><td class="easy">1/2</td><td class="easy weekend">1/2</td></tr>
+</table>
+<table>
+<tr><th>时段</th><th class="weekend">3/22(日)</th><th>3/23(月)</th><th>3/24(火)</th><th>3/25(水)</th><th>3/26(木)</th><th>3/27(金)</th><th class="weekend">3/28(土)</th></tr>
+<tr><td class="time">09:00</td><td class="unavailable weekend">-</td><td class="easy">1/2</td><td class="unavailable">-</td><td class="easy">1/3</td><td class="hard">1/15</td><td class="unavailable">-</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">11:00</td><td class="unavailable weekend">-</td><td class="medium">1/9</td><td class="unavailable">-</td><td class="easy">1/1</td><td class="medium">1/9</td><td class="unavailable">-</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">13:00</td><td class="unavailable weekend">-</td><td class="hot">&#9733;1/0</td><td class="unavailable">-</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="unavailable">-</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">15:00</td><td class="unavailable weekend">-</td><td class="easy">1/1</td><td class="unavailable">-</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="unavailable">-</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">17:00</td><td class="medium weekend">1/6</td><td class="hot">&#9733;1/0</td><td class="unavailable">-</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="easy weekend">1/2</td></tr>
+<tr><td class="time">18:30</td><td class="easy weekend">1/2</td><td class="easy">1/3</td><td class="unavailable">-</td><td class="hard">1/11</td><td class="medium">1/6</td><td class="hard">1/22</td><td class="easy weekend">1/2</td></tr>
+</table>
+<table>
+<tr><th>时段</th><th class="weekend">3/29(日)</th><th>3/30(月)</th><th>3/31(火)</th></tr>
+<tr><td class="time">09:00</td><td class="unavailable weekend">-</td><td class="easy">1/1</td><td class="hard">1/27</td></tr>
+<tr><td class="time">11:00</td><td class="unavailable weekend">-</td><td class="unavailable">-</td><td class="hard">1/13</td></tr>
+<tr><td class="time">13:00</td><td class="unavailable weekend">-</td><td class="unavailable">-</td><td class="medium">1/10</td></tr>
+<tr><td class="time">15:00</td><td class="unavailable weekend">-</td><td class="hot">&#9733;1/0</td><td class="easy">1/2</td></tr>
+<tr><td class="time">17:00</td><td class="easy weekend">1/1</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td></tr>
+<tr><td class="time">18:30</td><td class="easy weekend">1/2</td><td class="easy">1/2</td><td class="easy">1/2</td></tr>
+</table>
+</div></div>
+<div class="facility">
+<div class="facility-header" onclick="this.nextElementSibling.classList.toggle('collapsed')">富士見テニス場１２ <span class="toggle">&#9660;</span></div>
+<div class="facility-body">
+<table>
+<tr><th>时段</th><th class="weekend">3/1(日)</th><th>3/2(月)</th><th>3/3(火)</th><th>3/4(水)</th><th>3/5(木)</th><th>3/6(金)</th><th class="weekend">3/7(土)</th></tr>
+<tr><td class="time">09:00</td><td class="unavailable weekend">-</td><td class="hard">1/14</td><td class="medium">1/4</td><td class="unavailable">-</td><td class="unavailable">-</td><td class="unavailable">-</td><td class="medium weekend">1/7</td></tr>
+<tr><td class="time">11:00</td><td class="unavailable weekend">-</td><td class="hot">&#9733;1/0</td><td class="hard">1/43</td><td class="unavailable">-</td><td class="unavailable">-</td><td class="unavailable">-</td><td class="hard weekend">1/32</td></tr>
+<tr><td class="time">13:00</td><td class="unavailable weekend">-</td><td class="medium">1/7</td><td class="easy">1/1</td><td class="hard">1/11</td><td class="hot">&#9733;1/0</td><td class="easy">1/1</td><td class="medium weekend">1/10</td></tr>
+<tr><td class="time">15:00</td><td class="unavailable weekend">-</td><td class="hot">&#9733;1/0</td><td class="medium">1/10</td><td class="unavailable">-</td><td class="unavailable">-</td><td class="unavailable">-</td><td class="medium weekend">1/9</td></tr>
+<tr><td class="time">17:00</td><td class="unavailable weekend">-</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="unavailable">-</td><td class="unavailable">-</td><td class="unavailable">-</td><td class="medium weekend">1/4</td></tr>
+<tr><td class="time">18:30</td><td class="easy weekend">1/2</td><td class="easy">1/3</td><td class="hard">1/28</td><td class="unavailable">-</td><td class="unavailable">-</td><td class="unavailable">-</td><td class="easy weekend">1/3</td></tr>
+</table>
+<table>
+<tr><th>时段</th><th class="weekend">3/8(日)</th><th>3/9(月)</th><th>3/10(火)</th><th>3/11(水)</th><th>3/12(木)</th><th>3/13(金)</th><th class="weekend">3/14(土)</th></tr>
+<tr><td class="time">09:00</td><td class="medium weekend">1/10</td><td class="unavailable">-</td><td class="easy">1/3</td><td class="unavailable">-</td><td class="unavailable">-</td><td class="unavailable">-</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">11:00</td><td class="hard weekend">1/15</td><td class="unavailable">-</td><td class="hard">1/19</td><td class="unavailable">-</td><td class="unavailable">-</td><td class="unavailable">-</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">13:00</td><td class="medium weekend">1/9</td><td class="unavailable">-</td><td class="medium">1/7</td><td class="medium">1/7</td><td class="hot">&#9733;1/0</td><td class="medium">1/4</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">15:00</td><td class="hard weekend">1/19</td><td class="unavailable">-</td><td class="medium">1/5</td><td class="unavailable">-</td><td class="unavailable">-</td><td class="unavailable">-</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">17:00</td><td class="easy weekend">1/1</td><td class="unavailable">-</td><td class="hot">&#9733;1/0</td><td class="unavailable">-</td><td class="unavailable">-</td><td class="unavailable">-</td><td class="medium weekend">1/10</td></tr>
+<tr><td class="time">18:30</td><td class="easy weekend">1/2</td><td class="unavailable">-</td><td class="hard">1/28</td><td class="unavailable">-</td><td class="unavailable">-</td><td class="unavailable">-</td><td class="hard weekend">1/16</td></tr>
+</table>
+<table>
+<tr><th>时段</th><th class="weekend">3/15(日)</th><th>3/16(月)</th><th>3/17(火)</th><th>3/18(水)</th><th>3/19(木)</th><th>3/20(金)</th><th class="weekend">3/21(土)</th></tr>
+<tr><td class="time">09:00</td><td class="hard weekend">1/14</td><td class="hard">1/27</td><td class="easy">1/3</td><td class="unavailable">-</td><td class="unavailable">-</td><td class="hard">1/21</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">11:00</td><td class="hard weekend">1/16</td><td class="easy">1/1</td><td class="hard">1/16</td><td class="unavailable">-</td><td class="unavailable">-</td><td class="hard">1/25</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">13:00</td><td class="hard weekend">1/18</td><td class="hot">&#9733;1/0</td><td class="medium">1/9</td><td class="hard">1/13</td><td class="hot">&#9733;1/0</td><td class="hard">1/25</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">15:00</td><td class="medium weekend">1/9</td><td class="hot">&#9733;1/0</td><td class="hard">1/11</td><td class="unavailable">-</td><td class="unavailable">-</td><td class="hard">1/12</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">17:00</td><td class="easy weekend">1/2</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td><td class="unavailable">-</td><td class="unavailable">-</td><td class="easy">1/2</td><td class="easy weekend">1/2</td></tr>
+<tr><td class="time">18:30</td><td class="easy weekend">1/3</td><td class="medium">1/5</td><td class="hard">1/27</td><td class="unavailable">-</td><td class="unavailable">-</td><td class="medium">1/4</td><td class="hard weekend">1/16</td></tr>
+</table>
+<table>
+<tr><th>时段</th><th class="weekend">3/22(日)</th><th>3/23(月)</th><th>3/24(火)</th><th>3/25(水)</th><th>3/26(木)</th><th>3/27(金)</th><th class="weekend">3/28(土)</th></tr>
+<tr><td class="time">09:00</td><td class="unavailable weekend">-</td><td class="easy">1/1</td><td class="unavailable">-</td><td class="unavailable">-</td><td class="unavailable">-</td><td class="unavailable">-</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">11:00</td><td class="unavailable weekend">-</td><td class="easy">1/1</td><td class="unavailable">-</td><td class="unavailable">-</td><td class="unavailable">-</td><td class="unavailable">-</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">13:00</td><td class="unavailable weekend">-</td><td class="hot">&#9733;1/0</td><td class="unavailable">-</td><td class="hard">1/12</td><td class="easy">1/1</td><td class="unavailable">-</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">15:00</td><td class="unavailable weekend">-</td><td class="easy">1/1</td><td class="unavailable">-</td><td class="unavailable">-</td><td class="unavailable">-</td><td class="unavailable">-</td><td class="unavailable weekend">-</td></tr>
+<tr><td class="time">17:00</td><td class="medium weekend">1/4</td><td class="hot">&#9733;1/0</td><td class="unavailable">-</td><td class="unavailable">-</td><td class="unavailable">-</td><td class="unavailable">-</td><td class="easy weekend">1/2</td></tr>
+<tr><td class="time">18:30</td><td class="medium weekend">1/9</td><td class="hard">1/14</td><td class="unavailable">-</td><td class="unavailable">-</td><td class="unavailable">-</td><td class="unavailable">-</td><td class="easy weekend">1/3</td></tr>
+</table>
+<table>
+<tr><th>时段</th><th class="weekend">3/29(日)</th><th>3/30(月)</th><th>3/31(火)</th></tr>
+<tr><td class="time">09:00</td><td class="unavailable weekend">-</td><td class="easy">1/1</td><td class="medium">1/4</td></tr>
+<tr><td class="time">11:00</td><td class="unavailable weekend">-</td><td class="unavailable">-</td><td class="medium">1/8</td></tr>
+<tr><td class="time">13:00</td><td class="unavailable weekend">-</td><td class="unavailable">-</td><td class="easy">1/3</td></tr>
+<tr><td class="time">15:00</td><td class="unavailable weekend">-</td><td class="hot">&#9733;1/0</td><td class="medium">1/8</td></tr>
+<tr><td class="time">17:00</td><td class="easy weekend">1/2</td><td class="hot">&#9733;1/0</td><td class="hot">&#9733;1/0</td></tr>
+<tr><td class="time">18:30</td><td class="medium weekend">1/5</td><td class="hard">1/18</td><td class="hard">1/27</td></tr>
+</table>
+</div></div>
+
+<script>
+// 默认折叠除第一个外的所有场地
+document.querySelectorAll('.facility-body').forEach((el, i) => {
+  if (i > 0) el.classList.add('collapsed');
+});
+</script>
+</body>
+</html>
