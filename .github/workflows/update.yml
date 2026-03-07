@@ -2,15 +2,32 @@ name: Update Tennis Schedule
 
 on:
   schedule:
-    # 每天早上 8 点（日本时间）= UTC 23:00 前一天
-    - cron: '0 23 * * *'
+    # 每 30 分钟触发一次，在 job 内判断日本时间是否为每月 1-8 号
+    - cron: '0,30 * * * *'
   workflow_dispatch: # 支持手动触发
 
 permissions:
   contents: write
 
 jobs:
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      should_run: ${{ steps.check_date.outputs.should_run }}
+    steps:
+      - id: check_date
+        run: |
+          JST_DAY=$(TZ=Asia/Tokyo date +%-d)
+          echo "日本时间今天是 ${JST_DAY} 号"
+          if [ "$JST_DAY" -ge 1 ] && [ "$JST_DAY" -le 8 ]; then
+            echo "should_run=true" >> $GITHUB_OUTPUT
+          else
+            echo "should_run=false" >> $GITHUB_OUTPUT
+          fi
+
   update:
+    needs: check
+    if: needs.check.outputs.should_run == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
