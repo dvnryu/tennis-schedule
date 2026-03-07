@@ -349,31 +349,75 @@ def write_html(all_data, output_path):
     next_month = today.month + 1 if today.month < 12 else 1
     now = today.strftime('%Y-%m-%d %H:%M')
 
-    # 收集所有时段
+    # 收集所有时段和日期
     all_times_set = set()
+    all_dates_set = set()
     for schedule in all_data.values():
-        for dd in schedule.values():
-            all_times_set.update(dd.keys())
+        for date, times in schedule.items():
+            all_dates_set.add(date)
+            all_times_set.update(times.keys())
     time_slots_raw = sorted(all_times_set, key=lambda t: format_time(t))
     fmt_slots = [format_time(ts) for ts in time_slots_raw]
+    all_dates = sorted(all_dates_set, key=date_sort_key)
     slots_json = '[' + ','.join(f'"{s}"' for s in fmt_slots) + ']'
 
-    # 构建每个场地的 HTML
+    # ── 汇总数据：{日期: {时段: 最优val}} ──
+    # 对每个日期+时段，找申请人数最少（最容易中签）的那面球场的值
+    summary = {d: {ft: None for ft in fmt_slots} for d in all_dates}
+    for schedule in all_data.values():
+        for date, times in schedule.items():
+            for ts, val in times.items():
+                ft = format_time(ts)
+                cur = summary[date][ft]
+                if val == '-':
+                    continue
+                m = re.match(r'\d+/(\d+)', val)
+                if not m:
+                    continue
+                applicants = int(m.group(1))
+                if cur is None:
+                    summary[date][ft] = (applicants, val)
+                elif applicants < cur[0]:
+                    summary[date][ft] = (applicants, val)
+
+    # 汇总表
+    sum_hdr = '<tr><th class="col-time">時間</th>'
+    for d in all_dates:
+        cls = 'col-we' if is_weekend(d) else 'col-wd'
+        sum_hdr += f'<th class="{cls}">{short_date(d)}</th>'
+    sum_hdr += '</tr>'
+
+    sum_body = ''
+    for ts in time_slots_raw:
+        ft = format_time(ts)
+        sum_body += f'<tr class="row-time" data-time="{ft}"><td class="col-time">{ft}</td>'
+        for d in all_dates:
+            entry = summary[d][ft]
+            if entry is None:
+                val, lv = '-', 'unavailable'
+            else:
+                val = entry[1]
+                lv = cell_class(val) or 'unavailable'
+            display = f'★{val}' if lv == 'hot' else val
+            we_cls = 'col-we' if is_weekend(d) else 'col-wd'
+            sum_body += f'<td class="{we_cls} lv-{lv}" data-level="{lv}">{display}</td>'
+        sum_body += '</tr>'
+
+    sum_html = f'<div class="tbl-wrap"><table><thead>{sum_hdr}</thead><tbody>{sum_body}</tbody></table></div>'
+
+    # ── 场地明细 ──
     fac_html = ''
     for fac_name, schedule in all_data.items():
         if not schedule:
             continue
         dates = sorted(schedule.keys(), key=date_sort_key)
 
-        # 表头（单张大表，所有日期一行）
         hdr = '<tr><th class="col-time">時間</th>'
         for d in dates:
-            we = is_weekend(d)
-            cls = 'col-we' if we else 'col-wd'
+            cls = 'col-we' if is_weekend(d) else 'col-wd'
             hdr += f'<th class="{cls}">{short_date(d)}</th>'
         hdr += '</tr>'
 
-        # 表体
         body = ''
         for ts in time_slots_raw:
             ft = format_time(ts)
@@ -389,7 +433,7 @@ def write_html(all_data, output_path):
 
         fac_html += f'''<div class="facility">
 <div class="fac-hd" onclick="toggleBody(this)">{fac_name}<span class="arrow">▼</span></div>
-<div class="fac-bd"><div class="tbl-wrap"><table><thead>{hdr}</thead><tbody>{body}</tbody></table></div></div>
+<div class="fac-bd open"><div class="tbl-wrap"><table><thead>{hdr}</thead><tbody>{body}</tbody></table></div></div>
 </div>\n'''
 
     html = f'''<!DOCTYPE html>
@@ -412,12 +456,17 @@ def write_html(all_data, output_path):
 body{{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}}
 
 /* Header */
-.site-header{{background:linear-gradient(135deg,#0f172a,#1e1b4b);border-bottom:1px solid var(--border);padding:18px 20px 14px;position:sticky;top:0;z-index:200}}
-.site-title{{font-size:1.3em;font-weight:700;background:linear-gradient(135deg,#22d3ee,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}}
-.site-meta{{font-size:.75em;color:var(--muted);margin-top:3px}}
+.site-header{{background:linear-gradient(135deg,#0f172a,#1e1b4b);border-bottom:1px solid var(--border);padding:16px 20px 12px;position:sticky;top:0;z-index:200}}
+.site-title{{font-size:1.25em;font-weight:700;background:linear-gradient(135deg,#22d3ee,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}}
+.site-meta{{font-size:.74em;color:var(--muted);margin-top:3px}}
 
-/* Filter bar */
-.filters{{display:flex;flex-wrap:wrap;gap:10px 20px;padding:12px 20px;background:#0d1424;border-bottom:1px solid var(--border);align-items:center;position:sticky;top:57px;z-index:150}}
+/* Toolbar */
+.toolbar{{background:#0d1424;border-bottom:1px solid var(--border);position:sticky;top:52px;z-index:150}}
+.tabs{{display:flex;gap:2px;padding:10px 20px 0}}
+.tab{{padding:7px 18px;border-radius:8px 8px 0 0;border:1px solid transparent;background:transparent;color:var(--muted);cursor:pointer;font-size:.85em;font-weight:500;transition:all .15s}}
+.tab:hover{{color:var(--text)}}
+.tab.on{{background:var(--card);border-color:var(--border);border-bottom-color:var(--card);color:var(--text)}}
+.filters{{display:flex;flex-wrap:wrap;gap:8px 18px;padding:10px 20px;align-items:center}}
 .fg{{display:flex;flex-wrap:wrap;gap:5px;align-items:center}}
 .flabel{{font-size:.72em;color:var(--muted);white-space:nowrap;margin-right:2px}}
 .btn{{padding:3px 11px;border-radius:20px;border:1px solid #2d3e58;background:transparent;color:var(--muted);cursor:pointer;font-size:.78em;white-space:nowrap;transition:all .15s}}
@@ -427,19 +476,22 @@ body{{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
 .btn.lv-easy.on{{background:#0c2340;border-color:#0284c7;color:#7dd3fc}}
 .btn.lv-medium.on{{background:#451a03;border-color:#b45309;color:#fde68a}}
 .btn.lv-hard.on{{background:#450a0a;border-color:#b91c1c;color:#fca5a5}}
-.btn.day.on{{background:#1e3a5f;border-color:#0284c7;color:#7dd3fc}}
+.btn.day.on,.btn.expand-btn.on{{background:#1e3a5f;border-color:#0284c7;color:#7dd3fc}}
 .btn.time-btn.on{{background:#1e293b;border-color:#334155;color:var(--text)}}
 .btn.reset{{border-color:#334155}}
 
-/* Facility cards */
+/* Views */
 .main{{padding:12px 20px;display:flex;flex-direction:column;gap:10px}}
+.view{{display:none}}.view.on{{display:flex;flex-direction:column;gap:10px}}
+.sum-legend{{font-size:.74em;color:var(--muted);padding:6px 2px}}
+
+/* Facility cards */
 .facility{{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden}}
-.fac-hd{{padding:11px 16px;font-size:.95em;font-weight:600;cursor:pointer;user-select:none;display:flex;justify-content:space-between;align-items:center;background:linear-gradient(90deg,#1e3a5f18,transparent);transition:background .15s}}
+.fac-hd{{padding:10px 16px;font-size:.93em;font-weight:600;cursor:pointer;user-select:none;display:flex;justify-content:space-between;align-items:center;background:linear-gradient(90deg,#1e3a5f18,transparent);transition:background .15s}}
 .fac-hd:hover{{background:linear-gradient(90deg,#1e3a5f44,transparent)}}
 .arrow{{font-size:.75em;color:var(--muted);transition:transform .2s}}
 .fac-hd.open .arrow{{transform:rotate(180deg)}}
-.fac-bd{{display:none}}
-.fac-bd.open{{display:block}}
+.fac-bd{{display:none}}.fac-bd.open{{display:block}}
 
 /* Table */
 .tbl-wrap{{overflow-x:auto;padding-bottom:4px}}
@@ -447,7 +499,7 @@ table{{border-collapse:collapse;font-size:.82em;white-space:nowrap}}
 thead th{{padding:6px 9px;text-align:center;background:#141e30;border-bottom:2px solid var(--border);font-weight:600;position:sticky;top:0;z-index:10}}
 thead th.col-we{{background:#1a1232}}
 thead th.col-time{{position:sticky;left:0;z-index:20;background:#0f1829}}
-tbody tr:hover td{{filter:brightness(1.15)}}
+tbody tr:hover td{{filter:brightness(1.18)}}
 tbody td{{padding:5px 9px;text-align:center;border-top:1px solid #161f30}}
 tbody td.col-time{{background:#0f1829;font-weight:600;text-align:center;position:sticky;left:0;z-index:5;border-right:1px solid var(--border)}}
 tbody td.col-we{{background:var(--we-tint)}}
@@ -457,7 +509,7 @@ td.lv-medium{{background:var(--med-bg);color:var(--med-fg)}}
 td.lv-hard{{background:var(--hard-bg);color:var(--hard-fg)}}
 td.lv-unavailable,td.lv-other{{background:var(--na-bg);color:var(--na-fg)}}
 
-/* Filter state */
+/* Filter states */
 body.hide-wd .col-wd{{display:none}}
 body.hide-we .col-we{{display:none}}
 body.dim-mode td[data-level]{{opacity:.07}}
@@ -465,9 +517,8 @@ body.dim-mode td.col-time{{opacity:1!important}}
 body.dim-mode td.lv-show{{opacity:1}}
 
 @media(max-width:640px){{
-  .site-header,.filters,.main{{padding-left:10px;padding-right:10px}}
-  table{{font-size:.74em}}
-  tbody td{{padding:4px 5px}}
+  .site-header,.filters,.tabs,.main{{padding-left:10px;padding-right:10px}}
+  table{{font-size:.74em}}tbody td{{padding:4px 5px}}
 }}
 </style>
 </head>
@@ -478,35 +529,52 @@ body.dim-mode td.lv-show{{opacity:1}}
   <div class="site-meta">更新: {now} &nbsp;·&nbsp; {next_month}月 &nbsp;·&nbsp; 表示: 名額/申請数</div>
 </header>
 
-<div class="filters">
-  <div class="fg">
-    <span class="flabel">難易度</span>
-    <button class="btn lv-hot" data-lv="hot" onclick="toggleLv(this)">★ 必中(0人)</button>
-    <button class="btn lv-easy" data-lv="easy" onclick="toggleLv(this)">容易(1-3)</button>
-    <button class="btn lv-medium" data-lv="medium" onclick="toggleLv(this)">一般(4-10)</button>
-    <button class="btn lv-hard" data-lv="hard" onclick="toggleLv(this)">激戦(11+)</button>
+<div class="toolbar">
+  <div class="tabs">
+    <button class="tab on" onclick="setView('summary',this)">サマリー</button>
+    <button class="tab" onclick="setView('facility',this)">場別</button>
   </div>
-  <div class="fg">
-    <span class="flabel">曜日</span>
-    <button class="btn day on" data-day="all" onclick="setDay(this)">全部</button>
-    <button class="btn day" data-day="wd" onclick="setDay(this)">平日</button>
-    <button class="btn day" data-day="we" onclick="setDay(this)">週末</button>
+  <div class="filters">
+    <div class="fg">
+      <span class="flabel">難易度</span>
+      <button class="btn lv-hot" data-lv="hot" onclick="toggleLv(this)">★ 必中(0人)</button>
+      <button class="btn lv-easy" data-lv="easy" onclick="toggleLv(this)">● 容易(1-3)</button>
+      <button class="btn lv-medium" data-lv="medium" onclick="toggleLv(this)">△ 一般(4-10)</button>
+      <button class="btn lv-hard" data-lv="hard" onclick="toggleLv(this)">× 激戦(11+)</button>
+    </div>
+    <div class="fg">
+      <span class="flabel">曜日</span>
+      <button class="btn day on" data-day="all" onclick="setDay(this)">全部</button>
+      <button class="btn day" data-day="wd" onclick="setDay(this)">平日</button>
+      <button class="btn day" data-day="we" onclick="setDay(this)">週末</button>
+    </div>
+    <div class="fg" id="time-fg">
+      <span class="flabel">時間</span>
+    </div>
+    <div class="fg" id="expand-fg" style="display:none">
+      <button class="btn expand-btn on" id="expand-btn" onclick="toggleAll()">全折畳</button>
+    </div>
+    <button class="btn reset" onclick="resetAll()">リセット</button>
   </div>
-  <div class="fg" id="time-fg">
-    <span class="flabel">時間</span>
-  </div>
-  <button class="btn reset" onclick="resetAll()">リセット</button>
 </div>
 
 <div class="main">
-{fac_html}</div>
+  <div class="view on" id="view-summary">
+    <div class="sum-legend">12面の中で一番申請が少ないコートの数値を表示 &nbsp;·&nbsp; 緑＝必中、青＝容易、黄＝一般、赤＝激戦</div>
+    <div class="facility">
+      {sum_html}
+    </div>
+  </div>
+  <div class="view" id="view-facility">
+{fac_html}  </div>
+</div>
 
 <script>
 const SLOTS = {slots_json};
 const activeLvs = new Set();
 let activeTimes = new Set(SLOTS);
+let allExpanded = true;
 
-// 初始化時間按钮
 const tfg = document.getElementById('time-fg');
 SLOTS.forEach(t => {{
   const b = document.createElement('button');
@@ -528,19 +596,18 @@ function applyTime() {{
 }}
 
 function toggleLv(btn) {{
-  const lv = btn.dataset.lv;
   btn.classList.toggle('on');
+  const lv = btn.dataset.lv;
   if (activeLvs.has(lv)) activeLvs.delete(lv); else activeLvs.add(lv);
   applyLv();
 }}
 
 function applyLv() {{
-  const body = document.body;
   if (activeLvs.size === 0) {{
-    body.classList.remove('dim-mode');
+    document.body.classList.remove('dim-mode');
     document.querySelectorAll('td.lv-show').forEach(td => td.classList.remove('lv-show'));
   }} else {{
-    body.classList.add('dim-mode');
+    document.body.classList.add('dim-mode');
     document.querySelectorAll('td[data-level]').forEach(td => {{
       td.classList.toggle('lv-show', activeLvs.has(td.dataset.level));
     }});
@@ -550,16 +617,34 @@ function applyLv() {{
 function setDay(btn) {{
   document.querySelectorAll('.btn.day').forEach(b => b.classList.remove('on'));
   btn.classList.add('on');
-  const body = document.body;
-  body.classList.remove('hide-wd', 'hide-we');
+  document.body.classList.remove('hide-wd', 'hide-we');
   const d = btn.dataset.day;
-  if (d === 'wd') body.classList.add('hide-we');
-  if (d === 'we') body.classList.add('hide-wd');
+  if (d === 'wd') document.body.classList.add('hide-we');
+  if (d === 'we') document.body.classList.add('hide-wd');
+}}
+
+function setView(view, btn) {{
+  document.querySelectorAll('.tab').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById('view-summary').classList.toggle('on', view === 'summary');
+  document.getElementById('view-facility').classList.toggle('on', view === 'facility');
+  document.getElementById('expand-fg').style.display = view === 'facility' ? '' : 'none';
 }}
 
 function toggleBody(hd) {{
   hd.classList.toggle('open');
   hd.nextElementSibling.classList.toggle('open');
+}}
+
+function toggleAll() {{
+  allExpanded = !allExpanded;
+  const btn = document.getElementById('expand-btn');
+  btn.textContent = allExpanded ? '全折畳' : '全展開';
+  btn.classList.toggle('on', allExpanded);
+  document.querySelectorAll('#view-facility .fac-hd').forEach(hd => {{
+    hd.classList.toggle('open', allExpanded);
+    hd.nextElementSibling.classList.toggle('open', allExpanded);
+  }});
 }}
 
 function resetAll() {{
@@ -573,11 +658,6 @@ function resetAll() {{
   document.querySelectorAll('td.lv-show').forEach(td => td.classList.remove('lv-show'));
   document.querySelectorAll('.row-time').forEach(tr => tr.style.display = '');
 }}
-
-// 默认展开第一个，折叠其余
-document.querySelectorAll('.fac-hd').forEach((hd, i) => {{
-  if (i === 0) {{ hd.classList.add('open'); hd.nextElementSibling.classList.add('open'); }}
-}});
 </script>
 </body>
 </html>'''
