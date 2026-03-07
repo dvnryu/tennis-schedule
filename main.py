@@ -436,6 +436,43 @@ def write_html(all_data, output_path):
 <div class="fac-bd open"><div class="tbl-wrap"><table><thead>{hdr}</thead><tbody>{body}</tbody></table></div></div>
 </div>\n'''
 
+
+    # ── 日付別视图 ──
+    fac_names = list(all_data.keys())
+    # 简短名：富士見テニス場１ → 場1
+    import unicodedata
+    def short_fac(name):
+        n = unicodedata.normalize('NFKC', name)
+        m = re.search(r'(\d+)$', n)
+        return f'場{m.group(1)}' if m else name[-3:]
+
+    short_names = [short_fac(n) for n in fac_names]
+
+    date_html = ''
+    for d in all_dates:
+        we_cls = 'we-date' if is_weekend(d) else ''
+        hdr = '<tr><th class="col-time">時間</th>'
+        for fn in short_names:
+            hdr += f'<th class="col-fac">{fn}</th>'
+        hdr += '</tr>'
+
+        body = ''
+        for ts in time_slots_raw:
+            ft = format_time(ts)
+            body += f'<tr class="row-time" data-time="{ft}"><td class="col-time">{ft}</td>'
+            for fac_name in fac_names:
+                val = all_data[fac_name].get(d, {}).get(ts, '-')
+                cc = cell_class(val)
+                lv = cc if cc else 'other'
+                display = f'★{val}' if cc == 'hot' else val
+                body += f'<td class="lv-{lv}" data-level="{lv}">{display}</td>'
+            body += '</tr>'
+
+        date_html += f'''<div class="facility {we_cls}">
+<div class="fac-hd" onclick="toggleBody(this)">{short_date(d)}<span class="arrow">▼</span></div>
+<div class="fac-bd open"><div class="tbl-wrap"><table><thead>{hdr}</thead><tbody>{body}</tbody></table></div></div>
+</div>\n'''
+
     html = f'''<!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -516,6 +553,7 @@ body.dim-mode td[data-level]{{opacity:.07}}
 body.dim-mode td.col-time{{opacity:1!important}}
 body.dim-mode td.lv-show{{opacity:1}}
 
+.we-date > .fac-hd{{background:linear-gradient(90deg,#2d1f4e44,transparent)}}
 @media(max-width:640px){{
   .site-header,.filters,.tabs,.main{{padding-left:10px;padding-right:10px}}
   table{{font-size:.74em}}tbody td{{padding:4px 5px}}
@@ -533,6 +571,7 @@ body.dim-mode td.lv-show{{opacity:1}}
   <div class="tabs">
     <button class="tab on" onclick="setView('summary',this)">サマリー</button>
     <button class="tab" onclick="setView('facility',this)">場別</button>
+    <button class="tab" onclick="setView('date',this)">日付別</button>
   </div>
   <div class="filters">
     <div class="fg">
@@ -567,6 +606,8 @@ body.dim-mode td.lv-show{{opacity:1}}
   </div>
   <div class="view" id="view-facility">
 {fac_html}  </div>
+  <div class="view" id="view-date">
+{date_html}  </div>
 </div>
 
 <script>
@@ -574,6 +615,7 @@ const SLOTS = {slots_json};
 const activeLvs = new Set();
 let activeTimes = new Set(SLOTS);
 let allExpanded = true;
+let currentView = 'summary';
 
 const tfg = document.getElementById('time-fg');
 SLOTS.forEach(t => {{
@@ -628,7 +670,9 @@ function setView(view, btn) {{
   btn.classList.add('on');
   document.getElementById('view-summary').classList.toggle('on', view === 'summary');
   document.getElementById('view-facility').classList.toggle('on', view === 'facility');
-  document.getElementById('expand-fg').style.display = view === 'facility' ? '' : 'none';
+  document.getElementById('view-date').classList.toggle('on', view === 'date');
+  document.getElementById('expand-fg').style.display = (view === 'facility' || view === 'date') ? '' : 'none';
+  currentView = view;
 }}
 
 function toggleBody(hd) {{
@@ -641,7 +685,8 @@ function toggleAll() {{
   const btn = document.getElementById('expand-btn');
   btn.textContent = allExpanded ? '全折畳' : '全展開';
   btn.classList.toggle('on', allExpanded);
-  document.querySelectorAll('#view-facility .fac-hd').forEach(hd => {{
+  const sel = currentView === 'date' ? '#view-date .fac-hd' : '#view-facility .fac-hd';
+  document.querySelectorAll(sel).forEach(hd => {{
     hd.classList.toggle('open', allExpanded);
     hd.nextElementSibling.classList.toggle('open', allExpanded);
   }});
