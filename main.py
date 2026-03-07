@@ -468,7 +468,8 @@ def write_html(all_data, output_path):
                 body += f'<td class="lv-{lv}" data-level="{lv}">{display}</td>'
             body += '</tr>'
 
-        date_html += f'''<div class="facility {we_cls}">
+        data_we = '1' if is_weekend(d) else '0'
+        date_html += f'''<div class="facility {we_cls}" data-we="{data_we}">
 <div class="fac-hd" onclick="toggleBody(this)">{short_date(d)}<span class="arrow">▼</span></div>
 <div class="fac-bd open"><div class="tbl-wrap"><table><thead>{hdr}</thead><tbody>{body}</tbody></table></div></div>
 </div>\n'''
@@ -493,12 +494,13 @@ def write_html(all_data, output_path):
 body{{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}}
 
 /* Header */
-.site-header{{background:linear-gradient(135deg,#0f172a,#1e1b4b);border-bottom:1px solid var(--border);padding:16px 20px 12px;position:sticky;top:0;z-index:200}}
+.sticky-nav{{position:sticky;top:0;z-index:200}}
+.site-header{{background:linear-gradient(135deg,#0f172a,#1e1b4b);border-bottom:1px solid var(--border);padding:16px 20px 12px}}
 .site-title{{font-size:1.25em;font-weight:700;background:linear-gradient(135deg,#22d3ee,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}}
 .site-meta{{font-size:.74em;color:var(--muted);margin-top:3px}}
 
 /* Toolbar */
-.toolbar{{background:#0d1424;border-bottom:1px solid var(--border);position:sticky;top:52px;z-index:150}}
+.toolbar{{background:#0d1424;border-bottom:1px solid var(--border)}}
 .tabs{{display:flex;gap:2px;padding:10px 20px 0}}
 .tab{{padding:7px 18px;border-radius:8px 8px 0 0;border:1px solid transparent;background:transparent;color:var(--muted);cursor:pointer;font-size:.85em;font-weight:500;transition:all .15s}}
 .tab:hover{{color:var(--text)}}
@@ -549,6 +551,8 @@ td.lv-unavailable,td.lv-other{{background:var(--na-bg);color:var(--na-fg)}}
 /* Filter states */
 body.hide-wd .col-wd{{display:none}}
 body.hide-we .col-we{{display:none}}
+body.hide-we #view-date .facility[data-we="1"]{{display:none}}
+body.hide-wd #view-date .facility[data-we="0"]{{display:none}}
 body.dim-mode td[data-level]{{opacity:.07}}
 body.dim-mode td.col-time{{opacity:1!important}}
 body.dim-mode td.lv-show{{opacity:1}}
@@ -562,6 +566,7 @@ body.dim-mode td.lv-show{{opacity:1}}
 </head>
 <body>
 
+<div class="sticky-nav">
 <header class="site-header">
   <div class="site-title">🎾 富士見テニスコート 抽選申込状況</div>
   <div class="site-meta">更新: {now} &nbsp;·&nbsp; {next_month}月 &nbsp;·&nbsp; 表示: 名額/申請数</div>
@@ -595,6 +600,7 @@ body.dim-mode td.lv-show{{opacity:1}}
     </div>
     <button class="btn reset" onclick="resetAll()">リセット</button>
   </div>
+</div>
 </div>
 
 <div class="main">
