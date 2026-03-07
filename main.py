@@ -8,6 +8,17 @@ from datetime import datetime
 warnings.filterwarnings('ignore')
 
 BASE_URL = "https://www.fureai-net.city.kawasaki.jp/web"
+def _load_env():
+    env_path = os.path.join(os.path.dirname(__file__), '.env')
+    if os.path.exists(env_path):
+        with open(env_path) as f:
+            for line in f:
+                line = line.strip()
+                if '=' in line and not line.startswith('#'):
+                    k, v = line.split('=', 1)
+                    os.environ.setdefault(k.strip(), v.strip())
+
+_load_env()
 USER_ID = os.environ.get("FUREAI_USER_ID", "")
 PASSWORD = os.environ.get("FUREAI_PASSWORD", "")
 
@@ -245,7 +256,14 @@ def parse_schedule_page(soup):
     return schedule, next_date
 
 
-def get_full_month_schedule(session, facility_soup, facility, start_ymd='20260301'):
+def get_full_month_schedule(session, facility_soup, facility, start_ymd=None):
+    if start_ymd is None:
+        today = datetime.now()
+        # 下个月月初
+        if today.month == 12:
+            start_ymd = f'{today.year + 1}0101'
+        else:
+            start_ymd = f'{today.year}{today.month + 1:02d}01'
     """获取一个场地整个月的时间表（自动翻页）"""
     # 第一周 — 强制 srchStartYMD 回到月初
     current_soup = post_step(session, facility_soup, 'lotWTransLotInstSrchVacantAction.do', {
@@ -327,155 +345,242 @@ def cell_class(val):
 
 def write_html(all_data, output_path):
     """生成 HTML 报告"""
-    now = datetime.now().strftime('%Y-%m-%d %H:%M')
+    today = datetime.now()
+    next_month = today.month + 1 if today.month < 12 else 1
+    now = today.strftime('%Y-%m-%d %H:%M')
+
+    # 收集所有时段
+    all_times_set = set()
+    for schedule in all_data.values():
+        for dd in schedule.values():
+            all_times_set.update(dd.keys())
+    time_slots_raw = sorted(all_times_set, key=lambda t: format_time(t))
+    fmt_slots = [format_time(ts) for ts in time_slots_raw]
+    slots_json = '[' + ','.join(f'"{s}"' for s in fmt_slots) + ']'
+
+    # 构建每个场地的 HTML
+    fac_html = ''
+    for fac_name, schedule in all_data.items():
+        if not schedule:
+            continue
+        dates = sorted(schedule.keys(), key=date_sort_key)
+
+        # 表头（单张大表，所有日期一行）
+        hdr = '<tr><th class="col-time">時間</th>'
+        for d in dates:
+            we = is_weekend(d)
+            cls = 'col-we' if we else 'col-wd'
+            hdr += f'<th class="{cls}">{short_date(d)}</th>'
+        hdr += '</tr>'
+
+        # 表体
+        body = ''
+        for ts in time_slots_raw:
+            ft = format_time(ts)
+            body += f'<tr class="row-time" data-time="{ft}"><td class="col-time">{ft}</td>'
+            for d in dates:
+                val = schedule.get(d, {}).get(ts, '-')
+                cc = cell_class(val)
+                lv = cc if cc else 'other'
+                we_cls = 'col-we' if is_weekend(d) else 'col-wd'
+                display = f'★{val}' if cc == 'hot' else val
+                body += f'<td class="{we_cls} lv-{lv}" data-level="{lv}">{display}</td>'
+            body += '</tr>'
+
+        fac_html += f'''<div class="facility">
+<div class="fac-hd" onclick="toggleBody(this)">{fac_name}<span class="arrow">▼</span></div>
+<div class="fac-bd"><div class="tbl-wrap"><table><thead>{hdr}</thead><tbody>{body}</tbody></table></div></div>
+</div>\n'''
 
     html = f'''<!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="ja">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>富士見テニスコート 抽選状況</title>
+<title>富士見テニスコート 抽選申込状況</title>
 <style>
-  * {{ margin: 0; padding: 0; box-sizing: border-box; }}
-  body {{
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background: #0f172a; color: #e2e8f0; padding: 20px;
-    max-width: 1200px; margin: 0 auto;
-  }}
-  h1 {{
-    text-align: center; font-size: 1.6em; margin-bottom: 4px;
-    background: linear-gradient(135deg, #22d3ee, #a78bfa);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  }}
-  .subtitle {{ text-align: center; color: #94a3b8; font-size: 0.85em; margin-bottom: 24px; }}
-  .legend {{
-    display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;
-    margin-bottom: 24px; font-size: 0.82em;
-  }}
-  .legend span {{
-    padding: 4px 10px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px;
-  }}
-  .legend .hot {{ background: #065f46; color: #6ee7b7; }}
-  .legend .easy {{ background: #1e3a5f; color: #7dd3fc; }}
-  .legend .medium {{ background: #713f12; color: #fde68a; }}
-  .legend .hard {{ background: #7f1d1d; color: #fca5a5; }}
-  .legend .unavailable {{ background: #1e293b; color: #64748b; }}
+*{{margin:0;padding:0;box-sizing:border-box}}
+:root{{
+  --bg:#0a0f1e;--card:#111827;--border:#1e293b;--text:#e2e8f0;--muted:#64748b;
+  --hot-bg:#064e3b;--hot-fg:#6ee7b7;
+  --easy-bg:#0c2340;--easy-fg:#7dd3fc;
+  --med-bg:#451a03;--med-fg:#fde68a;
+  --hard-bg:#450a0a;--hard-fg:#fca5a5;
+  --na-bg:#0d1424;--na-fg:#2d3e58;
+  --we-tint:rgba(139,92,246,.06);
+}}
+body{{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}}
 
-  .facility {{
-    background: #1e293b; border-radius: 12px; margin-bottom: 20px;
-    overflow: hidden; border: 1px solid #334155;
-  }}
-  .facility-header {{
-    padding: 12px 20px; font-size: 1.1em; font-weight: 600;
-    background: linear-gradient(135deg, #1e3a5f, #312e81);
-    cursor: pointer; user-select: none;
-    display: flex; justify-content: space-between; align-items: center;
-  }}
-  .facility-header:hover {{ background: linear-gradient(135deg, #1e40af, #4338ca); }}
-  .facility-header .toggle {{ font-size: 0.8em; color: #94a3b8; }}
-  .facility-body {{ padding: 12px; overflow-x: auto; }}
-  .facility-body.collapsed {{ display: none; }}
+/* Header */
+.site-header{{background:linear-gradient(135deg,#0f172a,#1e1b4b);border-bottom:1px solid var(--border);padding:18px 20px 14px;position:sticky;top:0;z-index:200}}
+.site-title{{font-size:1.3em;font-weight:700;background:linear-gradient(135deg,#22d3ee,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}}
+.site-meta{{font-size:.75em;color:var(--muted);margin-top:3px}}
 
-  table {{
-    width: 100%; border-collapse: collapse; font-size: 0.85em;
-    margin-bottom: 8px;
-  }}
-  th, td {{
-    padding: 6px 8px; text-align: center; white-space: nowrap;
-    border: 1px solid #334155;
-  }}
-  th {{ background: #334155; font-weight: 600; position: sticky; top: 0; }}
-  th.weekend {{ background: #3b2d60; }}
-  td.time {{ background: #1e3a5f; font-weight: 600; text-align: right; }}
-  td.hot {{ background: #065f46; color: #6ee7b7; font-weight: 700; }}
-  td.easy {{ background: #0c3547; color: #7dd3fc; }}
-  td.medium {{ background: #422006; color: #fde68a; }}
-  td.hard {{ background: #450a0a; color: #fca5a5; }}
-  td.unavailable {{ background: #0f172a; color: #475569; }}
-  td.weekend {{ background-color: rgba(99, 102, 241, 0.08); }}
+/* Filter bar */
+.filters{{display:flex;flex-wrap:wrap;gap:10px 20px;padding:12px 20px;background:#0d1424;border-bottom:1px solid var(--border);align-items:center;position:sticky;top:57px;z-index:150}}
+.fg{{display:flex;flex-wrap:wrap;gap:5px;align-items:center}}
+.flabel{{font-size:.72em;color:var(--muted);white-space:nowrap;margin-right:2px}}
+.btn{{padding:3px 11px;border-radius:20px;border:1px solid #2d3e58;background:transparent;color:var(--muted);cursor:pointer;font-size:.78em;white-space:nowrap;transition:all .15s}}
+.btn:hover{{border-color:#475569;color:var(--text)}}
+.btn.on{{border-color:transparent;color:#fff}}
+.btn.lv-hot.on{{background:#065f46;border-color:#059669;color:#6ee7b7}}
+.btn.lv-easy.on{{background:#0c2340;border-color:#0284c7;color:#7dd3fc}}
+.btn.lv-medium.on{{background:#451a03;border-color:#b45309;color:#fde68a}}
+.btn.lv-hard.on{{background:#450a0a;border-color:#b91c1c;color:#fca5a5}}
+.btn.day.on{{background:#1e3a5f;border-color:#0284c7;color:#7dd3fc}}
+.btn.time-btn.on{{background:#1e293b;border-color:#334155;color:var(--text)}}
+.btn.reset{{border-color:#334155}}
 
-  .week-label {{
-    font-size: 0.75em; color: #64748b; padding: 8px 0 2px;
-    border-bottom: 1px solid #1e293b;
-  }}
+/* Facility cards */
+.main{{padding:12px 20px;display:flex;flex-direction:column;gap:10px}}
+.facility{{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden}}
+.fac-hd{{padding:11px 16px;font-size:.95em;font-weight:600;cursor:pointer;user-select:none;display:flex;justify-content:space-between;align-items:center;background:linear-gradient(90deg,#1e3a5f18,transparent);transition:background .15s}}
+.fac-hd:hover{{background:linear-gradient(90deg,#1e3a5f44,transparent)}}
+.arrow{{font-size:.75em;color:var(--muted);transition:transform .2s}}
+.fac-hd.open .arrow{{transform:rotate(180deg)}}
+.fac-bd{{display:none}}
+.fac-bd.open{{display:block}}
 
-  @media (max-width: 640px) {{
-    body {{ padding: 8px; }}
-    table {{ font-size: 0.75em; }}
-    th, td {{ padding: 4px 3px; }}
-  }}
+/* Table */
+.tbl-wrap{{overflow-x:auto;padding-bottom:4px}}
+table{{border-collapse:collapse;font-size:.82em;white-space:nowrap}}
+thead th{{padding:6px 9px;text-align:center;background:#141e30;border-bottom:2px solid var(--border);font-weight:600;position:sticky;top:0;z-index:10}}
+thead th.col-we{{background:#1a1232}}
+thead th.col-time{{position:sticky;left:0;z-index:20;background:#0f1829}}
+tbody tr:hover td{{filter:brightness(1.15)}}
+tbody td{{padding:5px 9px;text-align:center;border-top:1px solid #161f30}}
+tbody td.col-time{{background:#0f1829;font-weight:600;text-align:center;position:sticky;left:0;z-index:5;border-right:1px solid var(--border)}}
+tbody td.col-we{{background:var(--we-tint)}}
+td.lv-hot{{background:var(--hot-bg);color:var(--hot-fg);font-weight:700}}
+td.lv-easy{{background:var(--easy-bg);color:var(--easy-fg)}}
+td.lv-medium{{background:var(--med-bg);color:var(--med-fg)}}
+td.lv-hard{{background:var(--hard-bg);color:var(--hard-fg)}}
+td.lv-unavailable,td.lv-other{{background:var(--na-bg);color:var(--na-fg)}}
+
+/* Filter state */
+body.hide-wd .col-wd{{display:none}}
+body.hide-we .col-we{{display:none}}
+body.dim-mode td[data-level]{{opacity:.07}}
+body.dim-mode td.col-time{{opacity:1!important}}
+body.dim-mode td.lv-show{{opacity:1}}
+
+@media(max-width:640px){{
+  .site-header,.filters,.main{{padding-left:10px;padding-right:10px}}
+  table{{font-size:.74em}}
+  tbody td{{padding:4px 5px}}
+}}
 </style>
 </head>
 <body>
-<h1>&#127934; 富士見テニスコート 抽選申込状況</h1>
-<p class="subtitle">更新時間: {now} &nbsp;|&nbsp; 対象月: 3月 &nbsp;|&nbsp; 格式: 名額数/申請人数</p>
 
-<div class="legend">
-  <span class="hot">&#9733; 0人 必中</span>
-  <span class="easy">1~3人 容易</span>
-  <span class="medium">4~10人 一般</span>
-  <span class="hard">11人+ 激戦</span>
-  <span class="unavailable">- 不可</span>
+<header class="site-header">
+  <div class="site-title">🎾 富士見テニスコート 抽選申込状況</div>
+  <div class="site-meta">更新: {now} &nbsp;·&nbsp; {next_month}月 &nbsp;·&nbsp; 表示: 名額/申請数</div>
+</header>
+
+<div class="filters">
+  <div class="fg">
+    <span class="flabel">難易度</span>
+    <button class="btn lv-hot" data-lv="hot" onclick="toggleLv(this)">★ 必中(0人)</button>
+    <button class="btn lv-easy" data-lv="easy" onclick="toggleLv(this)">容易(1-3)</button>
+    <button class="btn lv-medium" data-lv="medium" onclick="toggleLv(this)">一般(4-10)</button>
+    <button class="btn lv-hard" data-lv="hard" onclick="toggleLv(this)">激戦(11+)</button>
+  </div>
+  <div class="fg">
+    <span class="flabel">曜日</span>
+    <button class="btn day on" data-day="all" onclick="setDay(this)">全部</button>
+    <button class="btn day" data-day="wd" onclick="setDay(this)">平日</button>
+    <button class="btn day" data-day="we" onclick="setDay(this)">週末</button>
+  </div>
+  <div class="fg" id="time-fg">
+    <span class="flabel">時間</span>
+  </div>
+  <button class="btn reset" onclick="resetAll()">リセット</button>
 </div>
-'''
 
-    for facility_name, schedule in all_data.items():
-        html += f'<div class="facility">\n'
-        html += f'<div class="facility-header" onclick="this.nextElementSibling.classList.toggle(\'collapsed\')">'
-        html += f'{facility_name} <span class="toggle">&#9660;</span></div>\n'
-        html += f'<div class="facility-body">\n'
+<div class="main">
+{fac_html}</div>
 
-        if not schedule:
-            html += '<p style="padding:12px;color:#64748b;">无数据</p>\n'
-            html += '</div></div>\n'
-            continue
-
-        # 收集时段并排序
-        all_times = set()
-        for dd in schedule.values():
-            all_times.update(dd.keys())
-        time_slots = sorted(all_times, key=lambda t: format_time(t))
-
-        # 日期排序
-        dates = sorted(schedule.keys(), key=date_sort_key)
-
-        # 按周输出表格
-        week_size = 7
-        for ws in range(0, len(dates), week_size):
-            week_dates = dates[ws:ws + week_size]
-
-            html += '<table>\n<tr><th>时段</th>'
-            for d in week_dates:
-                cls = ' class="weekend"' if is_weekend(d) else ''
-                html += f'<th{cls}>{short_date(d)}</th>'
-            html += '</tr>\n'
-
-            for ts in time_slots:
-                html += f'<tr><td class="time">{format_time(ts)}</td>'
-                for d in week_dates:
-                    val = schedule.get(d, {}).get(ts, '-')
-                    cc = cell_class(val)
-                    we = ' weekend' if is_weekend(d) else ''
-                    display = val
-                    if val.endswith('/0'):
-                        display = f'&#9733;{val}'
-                    html += f'<td class="{cc}{we}">{display}</td>'
-                html += '</tr>\n'
-
-            html += '</table>\n'
-
-        html += '</div></div>\n'
-
-    html += '''
 <script>
-// 默认折叠除第一个外的所有场地
-document.querySelectorAll('.facility-body').forEach((el, i) => {
-  if (i > 0) el.classList.add('collapsed');
-});
+const SLOTS = {slots_json};
+const activeLvs = new Set();
+let activeTimes = new Set(SLOTS);
+
+// 初始化時間按钮
+const tfg = document.getElementById('time-fg');
+SLOTS.forEach(t => {{
+  const b = document.createElement('button');
+  b.className = 'btn time-btn on';
+  b.textContent = t;
+  b.dataset.time = t;
+  b.onclick = () => {{
+    b.classList.toggle('on');
+    if (activeTimes.has(t)) activeTimes.delete(t); else activeTimes.add(t);
+    applyTime();
+  }};
+  tfg.appendChild(b);
+}});
+
+function applyTime() {{
+  document.querySelectorAll('.row-time').forEach(tr => {{
+    tr.style.display = activeTimes.has(tr.dataset.time) ? '' : 'none';
+  }});
+}}
+
+function toggleLv(btn) {{
+  const lv = btn.dataset.lv;
+  btn.classList.toggle('on');
+  if (activeLvs.has(lv)) activeLvs.delete(lv); else activeLvs.add(lv);
+  applyLv();
+}}
+
+function applyLv() {{
+  const body = document.body;
+  if (activeLvs.size === 0) {{
+    body.classList.remove('dim-mode');
+    document.querySelectorAll('td.lv-show').forEach(td => td.classList.remove('lv-show'));
+  }} else {{
+    body.classList.add('dim-mode');
+    document.querySelectorAll('td[data-level]').forEach(td => {{
+      td.classList.toggle('lv-show', activeLvs.has(td.dataset.level));
+    }});
+  }}
+}}
+
+function setDay(btn) {{
+  document.querySelectorAll('.btn.day').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  const body = document.body;
+  body.classList.remove('hide-wd', 'hide-we');
+  const d = btn.dataset.day;
+  if (d === 'wd') body.classList.add('hide-we');
+  if (d === 'we') body.classList.add('hide-wd');
+}}
+
+function toggleBody(hd) {{
+  hd.classList.toggle('open');
+  hd.nextElementSibling.classList.toggle('open');
+}}
+
+function resetAll() {{
+  activeLvs.clear();
+  activeTimes = new Set(SLOTS);
+  document.querySelectorAll('.btn[data-lv]').forEach(b => b.classList.remove('on'));
+  document.querySelectorAll('.btn.time-btn').forEach(b => b.classList.add('on'));
+  document.querySelectorAll('.btn.day').forEach(b => b.classList.remove('on'));
+  document.querySelector('.btn.day[data-day="all"]').classList.add('on');
+  document.body.classList.remove('dim-mode', 'hide-wd', 'hide-we');
+  document.querySelectorAll('td.lv-show').forEach(td => td.classList.remove('lv-show'));
+  document.querySelectorAll('.row-time').forEach(tr => tr.style.display = '');
+}}
+
+// 默认展开第一个，折叠其余
+document.querySelectorAll('.fac-hd').forEach((hd, i) => {{
+  if (i === 0) {{ hd.classList.add('open'); hd.nextElementSibling.classList.add('open'); }}
+}});
 </script>
 </body>
-</html>
-'''
+</html>'''
 
     with open(output_path, 'w', encoding='utf-8') as f:
         f.write(html)
