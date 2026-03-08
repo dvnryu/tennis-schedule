@@ -148,6 +148,9 @@ def navigate_to_facility_list(session, menu_soup):
                 groups.append((cd.group(1), name_td.text.strip()))
 
     if not groups:
+        if '受付済' in soup.get_text():
+            print("Step 6 ℹ️ 本期抽签已受理（受付済），申请入口已关闭，无需更新")
+            exit(0)
         print("Step 6 ❌ 没找到申込みボタン")
         print("  页面内容:", soup.get_text()[:300])
         return None
