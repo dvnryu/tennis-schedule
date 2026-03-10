@@ -2,7 +2,7 @@ import os
 import re
 import time
 import warnings
-from datetime import datetime, date
+from datetime import datetime, date, timedelta, timezone
 
 import requests
 from bs4 import BeautifulSoup
@@ -11,6 +11,11 @@ warnings.filterwarnings('ignore')
 
 BASE_URL = "https://www.fureai-net.city.kawasaki.jp/web"
 TARGET_FACILITY = '富士見テニスコート'
+JST = timezone(timedelta(hours=9), name="JST")
+
+
+def now_jst():
+    return datetime.now(JST)
 
 
 def create_session():
@@ -175,7 +180,7 @@ def get_week_start_date(soup):
     year_th = rows[0].find('th', {'class': 'rsvakitable'})
     year_text = year_th.get_text(strip=True) if year_th else ''
     year_m = re.search(r'(\d{4})年', year_text)
-    year = int(year_m.group(1)) if year_m else datetime.now().year
+    year = int(year_m.group(1)) if year_m else now_jst().year
 
     # 最初の日付列
     first_th = rows[0].find('th', {'class': 'rsvakitable3'})
@@ -196,7 +201,7 @@ def get_facility_schedule(session, inst_soup, facility_index, end_date):
     指定コートの週次時間帯データを取得（today ～ end_date）。
     戻り値: {日付文字列: {時間帯: ステータス}}
     """
-    today = datetime.now()
+    today = now_jst()
     start_ymd = today.strftime('%Y%m%d')
 
     # ① 月次カレンダーを経由して週次ビューへ（最初の1回だけ）
@@ -318,7 +323,7 @@ def cell_display(val, cc):
 
 
 def write_rsv_html(all_data, output_path):
-    today = datetime.now()
+    today = now_jst()
     now = today.strftime('%Y-%m-%d %H:%M')
     next_month = today.month + 1 if today.month < 12 else 1
 
@@ -686,7 +691,7 @@ if __name__ == "__main__":
     print("川崎市 富士見テニスコート 予約空き状況スクレイパー")
     print("=" * 60)
 
-    today = datetime.now()
+    today = now_jst()
     # 今月+来月末を終了日に設定
     next_month = today.month + 1 if today.month < 12 else 1
     next_year = today.year if today.month < 12 else today.year + 1

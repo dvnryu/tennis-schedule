@@ -3,11 +3,19 @@ import requests
 from bs4 import BeautifulSoup
 import re
 import warnings
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 
 warnings.filterwarnings('ignore')
 
 BASE_URL = "https://www.fureai-net.city.kawasaki.jp/web"
+JST = timezone(timedelta(hours=9), name="JST")
+
+
+def now_jst():
+    """返回日本时间"""
+    return datetime.now(JST)
+
+
 def _load_env():
     env_path = os.path.join(os.path.dirname(__file__), '.env')
     if os.path.exists(env_path):
@@ -261,7 +269,7 @@ def parse_schedule_page(soup):
 
 def get_full_month_schedule(session, facility_soup, facility, start_ymd=None):
     if start_ymd is None:
-        today = datetime.now()
+        today = now_jst()
         # 下个月月初
         if today.month == 12:
             start_ymd = f'{today.year + 1}0101'
@@ -348,7 +356,7 @@ def cell_class(val):
 
 def write_html(all_data, output_path):
     """生成 HTML 报告"""
-    today = datetime.now()
+    today = now_jst()
     next_month = today.month + 1 if today.month < 12 else 1
     now = today.strftime('%Y-%m-%d %H:%M')
 
