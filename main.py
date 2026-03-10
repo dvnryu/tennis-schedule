@@ -571,6 +571,7 @@ body.dim-mode td.lv-show{{opacity:1}}
 
 <div class="sticky-nav">
 <header class="site-header">
+  <a href="index.html" style="display:inline-block;font-size:.75em;color:#64748b;text-decoration:none;margin-bottom:8px;" onmouseover="this.style.color='#94a3b8'" onmouseout="this.style.color='#64748b'">← ホームへ</a>
   <div class="site-title">🎾 富士見テニスコート 抽選申込状況</div>
   <div class="site-meta">更新: {now} &nbsp;·&nbsp; {next_month}月 &nbsp;·&nbsp; 表示: 名額/申請数</div>
 </header>
@@ -758,7 +759,7 @@ if __name__ == "__main__":
         print(f"  ✅ 获取了 {len(schedule)} 天的数据")
 
     # 输出 HTML
-    output_path = os.path.join(os.path.dirname(__file__), "docs", "index.html")
+    output_path = os.path.join(os.path.dirname(__file__), "docs", "lot.html")
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     write_html(all_data, output_path)
 
