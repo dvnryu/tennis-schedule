@@ -3,9 +3,18 @@ import re
 import time
 import warnings
 from datetime import datetime, date, timedelta, timezone
+import json
 
 import requests
 from bs4 import BeautifulSoup
+
+from lib.schema import (
+    format_time_label,
+    normalize_time_code,
+    parse_japanese_date_label,
+    short_date_label,
+    short_facility_name,
+)
 
 warnings.filterwarnings('ignore')
 
@@ -286,13 +295,7 @@ def get_facility_schedule(session, inst_soup, facility_index, end_date):
 
 def format_time(code):
     """'０９００' → '09:00'"""
-    code = (code
-            .replace('０','0').replace('１','1').replace('２','2').replace('３','3')
-            .replace('４','4').replace('５','5').replace('６','6').replace('７','7')
-            .replace('８','8').replace('９','9'))
-    if len(code) == 4 and code.isdigit():
-        return f"{code[:2]}:{code[2:]}"
-    return code
+    return format_time_label(code)
 
 
 def date_sort_key(d):
@@ -303,17 +306,11 @@ def date_sort_key(d):
 
 def short_date(d):
     """'3月10日火曜日' → '3/10(火)'"""
-    m = re.match(r'(\d+)月(\d+)日(.)', d)
-    return f"{m.group(1)}/{m.group(2)}({m.group(3)})" if m else d[:7]
+    return short_date_label(d)
 
 
 def actual_date_from_label(d, today):
-    m = re.match(r'(\d+)月(\d+)日', d)
-    if not m:
-        return None
-    month, day = int(m.group(1)), int(m.group(2))
-    year = today.year + (1 if month < today.month else 0)
-    return date(year, month, day)
+    return parse_japanese_date_label(d, today)
 
 
 def date_meta(d, today):
@@ -387,490 +384,111 @@ def cell_display(val, cc):
     return labels.get(cc, val[:3] if val else '-')
 
 
-def write_rsv_html(all_data, output_path):
-    today = now_jst()
-    now = today.strftime('%Y-%m-%d %H:%M')
-    next_month = today.month + 1 if today.month < 12 else 1
-
-    # 全時間帯・日付
-    all_times_set = set()
-    all_dates_set = set()
-    for sch in all_data.values():
-        for date_str, times in sch.items():
-            all_dates_set.add(date_str)
-            all_times_set.update(times.keys())
-
-    if not all_dates_set:
-        print("⚠ データが空です")
-        return
-
-    # 全コート・全日付で一度も実データが無い時間帯（時間外・休館のみ）を除去
-    def has_real_data(ts):
-        for sch in all_data.values():
-            for times in sch.values():
-                if cell_class(times.get(ts, '-')) not in ('unavailable', 'closed', 'other'):
-                    return True
-        return False
-
-    time_slots_raw = [ts for ts in sorted(all_times_set, key=lambda t: format_time(t))
-                      if has_real_data(ts)]
-    fmt_slots = [format_time(ts) for ts in time_slots_raw]
-    all_dates = sorted(all_dates_set, key=date_sort_key)
-    all_date_meta = {d: date_meta(d, today.date()) for d in all_dates}
-    slots_json = '[' + ','.join(f'"{s}"' for s in fmt_slots) + ']'
-
-    # ── サマリー: 全コートで最も良い状態を表示 ──
-    priority = {'open':0,'general':1,'cancel':2,'full':3,'rain':4,'closed':5,'unavailable':6,'other':7}
-    summary = {d: {ft: None for ft in fmt_slots} for d in all_dates}
-    for sch in all_data.values():
-        for date_str, times in sch.items():
-            for ts, val in times.items():
-                ft = format_time(ts)
-                if ft not in fmt_slots:
-                    continue
-                cc = cell_class(val)
-                cur = summary[date_str][ft]
-                p = priority.get(cc, 7)
-                if cur is None or p < cur[0]:
-                    summary[date_str][ft] = (p, val, cc)
-
-    sum_hdr = '<tr><th class="col-time">時間</th>'
-    for d in all_dates:
-        meta = all_date_meta[d]
-        cls = 'col-special' if meta['day_group'] == 'special' else 'col-wd'
-        title = f' title="{meta["holiday_name"]}"' if meta['is_holiday'] else ''
-        sum_hdr += (
-            f'<th class="{cls}" data-date-key="{meta["key"]}" '
-            f'data-month-group="{meta["month_group"]}" data-day-group="{meta["day_group"]}"{title}>'
-            f'{date_label(d, meta)}</th>'
-        )
-    sum_hdr += '</tr>'
-
-    sum_body = ''
-    for ts in time_slots_raw:
-        ft = format_time(ts)
-        sum_body += f'<tr class="row-time" data-time="{ft}"><td class="col-time">{ft}</td>'
-        for d in all_dates:
-            meta = all_date_meta[d]
-            entry = summary[d][ft]
-            if entry is None:
-                val, cc = '-', 'unavailable'
-            else:
-                _, val, cc = entry
-            day_cls = 'col-special' if meta['day_group'] == 'special' else 'col-wd'
-            disp = cell_display(val, cc)
-            sum_body += (
-                f'<td class="{day_cls} lv-{cc}" data-level="{cc}" data-date-key="{meta["key"]}" '
-                f'data-month-group="{meta["month_group"]}" data-day-group="{meta["day_group"]}">{disp}</td>'
-            )
-        sum_body += '</tr>'
-
-    sum_html = (f'<div class="tbl-wrap"><table>'
-                f'<thead>{sum_hdr}</thead><tbody>{sum_body}</tbody>'
-                f'</table></div>')
-
-    # ── 場別ビュー ──
-    fac_html = ''
-    for fac_name, sch in all_data.items():
-        if not sch:
-            continue
-        dates = sorted(sch.keys(), key=date_sort_key)
-        hdr = '<tr><th class="col-time">時間</th>'
-        for d in dates:
-            meta = all_date_meta[d]
-            cls = 'col-special' if meta['day_group'] == 'special' else 'col-wd'
-            title = f' title="{meta["holiday_name"]}"' if meta['is_holiday'] else ''
-            hdr += (
-                f'<th class="{cls}" data-date-key="{meta["key"]}" '
-                f'data-month-group="{meta["month_group"]}" data-day-group="{meta["day_group"]}"{title}>'
-                f'{date_label(d, meta)}</th>'
-            )
-        hdr += '</tr>'
-
-        body = ''
-        for ts in time_slots_raw:
-            ft = format_time(ts)
-            body += f'<tr class="row-time" data-time="{ft}"><td class="col-time">{ft}</td>'
-            for d in dates:
-                meta = all_date_meta[d]
-                val = sch.get(d, {}).get(ts, '-')
-                cc = cell_class(val)
-                day_cls = 'col-special' if meta['day_group'] == 'special' else 'col-wd'
-                disp = cell_display(val, cc)
-                body += (
-                    f'<td class="{day_cls} lv-{cc}" data-level="{cc}" data-date-key="{meta["key"]}" '
-                    f'data-month-group="{meta["month_group"]}" data-day-group="{meta["day_group"]}">{disp}</td>'
-                )
-            body += '</tr>'
-
-        fac_html += (f'<div class="facility">'
-                     f'<div class="fac-hd" onclick="toggleBody(this)">'
-                     f'{fac_name}<span class="arrow">▼</span></div>'
-                     f'<div class="fac-bd open"><div class="tbl-wrap"><table>'
-                     f'<thead>{hdr}</thead><tbody>{body}</tbody>'
-                     f'</table></div></div></div>\n')
-
-    # ── 日付別ビュー ──
-    import unicodedata
-    fac_names = list(all_data.keys())
-
-    def short_fac(name):
-        n = unicodedata.normalize('NFKC', name)
-        m = re.search(r'(\d+)$', n)
-        return f'場{m.group(1)}' if m else name[-2:]
-
-    short_names = [short_fac(n) for n in fac_names]
-
-    date_html = ''
-    for d in all_dates:
-        meta = all_date_meta[d]
-        day_cls = 'special-date' if meta['day_group'] == 'special' else ''
-        hdr = '<tr><th class="col-time">時間</th>'
-        for fn in short_names:
-            hdr += f'<th class="col-fac">{fn}</th>'
-        hdr += '</tr>'
-
-        body = ''
-        for ts in time_slots_raw:
-            ft = format_time(ts)
-            body += f'<tr class="row-time" data-time="{ft}"><td class="col-time">{ft}</td>'
-            for fac_name in fac_names:
-                val = all_data[fac_name].get(d, {}).get(ts, '-')
-                cc = cell_class(val)
-                disp = cell_display(val, cc)
-                body += f'<td class="lv-{cc}" data-level="{cc}">{disp}</td>'
-            body += '</tr>'
-
-        title = f' title="{meta["holiday_name"]}"' if meta['is_holiday'] else ''
-        date_html += (f'<div class="facility {day_cls}" data-date-key="{meta["key"]}" '
-                      f'data-month-group="{meta["month_group"]}" data-day-group="{meta["day_group"]}">'
-                      f'<div class="fac-hd" onclick="toggleBody(this)">'
-                      f'<span{title}>{date_label(d, meta)}</span><span class="arrow">▼</span></div>'
-                      f'<div class="fac-bd open"><div class="tbl-wrap"><table>'
-                      f'<thead>{hdr}</thead><tbody>{body}</tbody>'
-                      f'</table></div></div></div>\n')
-
+def write_app_entry(output_path, src):
     html = f'''<!DOCTYPE html>
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="refresh" content="0; url=app.html?src={src}">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>富士見テニスコート 予約空き状況</title>
-<style>
-*{{margin:0;padding:0;box-sizing:border-box}}
-:root{{
-  --bg:#0a0f1e;--card:#111827;--border:#1e293b;--text:#e2e8f0;--muted:#64748b;
-  --open-bg:#064e3b;--open-fg:#6ee7b7;
-  --full-bg:#450a0a;--full-fg:#fca5a5;
-  --closed-bg:#292524;--closed-fg:#a8a29e;
-  --general-bg:#0c2340;--general-fg:#7dd3fc;
-  --rain-bg:#1e293b;--rain-fg:#94a3b8;
-  --cancel-bg:#451a03;--cancel-fg:#fde68a;
-  --na-bg:#0d1424;--na-fg:#475569;
-  --we-tint:rgba(139,92,246,.06);
-}}
-body{{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}}
-.sticky-nav{{position:sticky;top:0;z-index:200}}
-.site-header{{background:linear-gradient(135deg,#0f172a,#1e1b4b);border-bottom:1px solid var(--border);padding:16px 20px 12px}}
-.site-title{{font-size:1.25em;font-weight:700;background:linear-gradient(135deg,#22d3ee,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}}
-.site-meta{{font-size:.74em;color:var(--muted);margin-top:3px}}
-.toolbar{{background:#0d1424;border-bottom:1px solid var(--border)}}
-.tabs{{display:flex;gap:2px;padding:10px 20px 0}}
-.tab{{padding:7px 18px;border-radius:8px 8px 0 0;border:1px solid transparent;background:transparent;color:var(--muted);cursor:pointer;font-size:.85em;font-weight:500;transition:all .15s}}
-.tab:hover{{color:var(--text)}}
-.tab.on{{background:var(--card);border-color:var(--border);border-bottom-color:var(--card);color:var(--text)}}
-.filters{{display:flex;flex-wrap:wrap;gap:8px 18px;padding:10px 20px;align-items:center}}
-.fg{{display:flex;flex-wrap:wrap;gap:5px;align-items:center}}
-.flabel{{font-size:.72em;color:var(--muted);white-space:nowrap;margin-right:2px}}
-.btn{{padding:3px 11px;border-radius:20px;border:1px solid #2d3e58;background:transparent;color:var(--muted);cursor:pointer;font-size:.78em;white-space:nowrap;transition:all .15s}}
-.btn:hover{{border-color:#475569;color:var(--text)}}
-.btn.on{{border-color:transparent;color:#fff}}
-.btn.lv-open.on{{background:#065f46;border-color:#059669;color:#6ee7b7}}
-.btn.lv-full.on{{background:#450a0a;border-color:#b91c1c;color:#fca5a5}}
-.btn.lv-general.on{{background:#0c2340;border-color:#0284c7;color:#7dd3fc}}
-.btn.day.on,.btn.expand-btn.on{{background:#1e3a5f;border-color:#0284c7;color:#7dd3fc}}
-.btn.time-btn.on{{background:#1e293b;border-color:#334155;color:var(--text)}}
-.btn.reset{{border-color:#334155}}
-.main{{padding:12px 20px;display:flex;flex-direction:column;gap:10px}}
-.view{{display:none}}.view.on{{display:flex;flex-direction:column;gap:10px}}
-.sum-legend{{font-size:.74em;color:var(--muted);padding:6px 2px}}
-.facility{{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden}}
-.fac-hd{{padding:10px 16px;font-size:.93em;font-weight:600;cursor:pointer;user-select:none;display:flex;justify-content:space-between;align-items:center;background:linear-gradient(90deg,#1e3a5f18,transparent);transition:background .15s}}
-.fac-hd:hover{{background:linear-gradient(90deg,#1e3a5f44,transparent)}}
-.arrow{{font-size:.75em;color:var(--muted);transition:transform .2s}}
-.fac-hd.open .arrow{{transform:rotate(180deg)}}
-.fac-bd{{display:none}}.fac-bd.open{{display:block}}
-.tbl-wrap{{overflow-x:auto;padding-bottom:4px}}
-table{{border-collapse:collapse;font-size:.82em;white-space:nowrap}}
-thead th{{padding:6px 9px;text-align:center;background:#141e30;border-bottom:2px solid var(--border);font-weight:600;position:sticky;top:0;z-index:10}}
-thead th.col-special{{background:#1a1232}}
-thead th.col-time{{position:sticky;left:0;z-index:20;background:#0f1829}}
-tbody tr:hover td{{filter:brightness(1.18)}}
-tbody td{{padding:5px 9px;text-align:center;border-top:1px solid #161f30}}
-tbody td.col-time{{background:#0f1829;font-weight:600;text-align:center;position:sticky;left:0;z-index:5;border-right:1px solid var(--border)}}
-tbody td.col-special{{background:var(--we-tint)}}
-td.lv-open{{background:var(--open-bg);color:var(--open-fg);font-weight:700}}
-td.lv-full{{background:var(--full-bg);color:var(--full-fg)}}
-td.lv-general{{background:var(--general-bg);color:var(--general-fg)}}
-td.lv-rain{{background:var(--rain-bg);color:var(--rain-fg)}}
-td.lv-cancel{{background:var(--cancel-bg);color:var(--cancel-fg)}}
-td.lv-closed{{background:var(--closed-bg);color:var(--closed-fg)}}
-td.lv-unavailable,td.lv-other{{background:var(--na-bg);color:var(--na-fg)}}
-.special-date>.fac-hd{{background:linear-gradient(90deg,#2d1f4e44,transparent)}}
-@media(max-width:640px){{
-  .site-header,.filters,.tabs,.main{{padding-left:10px;padding-right:10px}}
-  table{{font-size:.74em}}tbody td{{padding:4px 5px}}
-}}
-</style>
+<title>Redirecting...</title>
 </head>
 <body>
-<div class="sticky-nav">
-<header class="site-header">
-  <a href="index.html" style="display:inline-block;font-size:.75em;color:#64748b;text-decoration:none;margin-bottom:8px;" onmouseover="this.style.color='#94a3b8'" onmouseout="this.style.color='#64748b'">← ホームへ</a>
-  <div class="site-title">🎾 富士見テニスコート 予約空き状況</div>
-  <div class="site-meta">更新: {now} &nbsp;·&nbsp; {today.month}月・{next_month}月 &nbsp;·&nbsp; ○=空き ×=予約あり</div>
-</header>
-<div class="toolbar">
-  <div class="tabs">
-    <button class="tab on" onclick="setView('summary',this)">サマリー</button>
-    <button class="tab" onclick="setView('facility',this)">場別</button>
-    <button class="tab" onclick="setView('date',this)">日付別</button>
-  </div>
-  <div class="filters">
-    <div class="fg">
-      <span class="flabel">絞込み</span>
-      <button class="btn open-only" id="open-only-btn" onclick="toggleOpenOnly(this)">○ 空き</button>
-    </div>
-    <div class="fg">
-      <span class="flabel">月</span>
-      <button class="btn month on" data-month="all" onclick="setMonth(this)">全部</button>
-      <button class="btn month" data-month="current" onclick="setMonth(this)">本月</button>
-      <button class="btn month" data-month="next" onclick="setMonth(this)">下一月</button>
-    </div>
-    <div class="fg">
-      <span class="flabel">曜日</span>
-      <button class="btn day on" data-day="all" onclick="setDay(this)">全部</button>
-      <button class="btn day" data-day="weekday" onclick="setDay(this)">平日</button>
-      <button class="btn day" data-day="special" onclick="setDay(this)">周末+休日</button>
-    </div>
-    <div class="fg" id="time-fg">
-      <span class="flabel">時間</span>
-    </div>
-    <div class="fg" id="expand-fg" style="display:none">
-      <button class="btn expand-btn on" id="expand-btn" onclick="toggleAll()">全折畳</button>
-    </div>
-    <button class="btn reset" onclick="resetAll()">リセット</button>
-  </div>
-</div>
-</div>
-
-<div class="main">
-  <div class="view on" id="view-summary">
-    <div class="sum-legend">12面の中で最も空きがある枠を表示 &nbsp;·&nbsp; 緑=空き 赤=全面予約 灰=受付外</div>
-    <div class="facility">{sum_html}</div>
-  </div>
-  <div class="view" id="view-facility">
-{fac_html}  </div>
-  <div class="view" id="view-date">
-{date_html}  </div>
-</div>
-
-<script>
-const SLOTS = {slots_json};
-let activeTimes = new Set(SLOTS);
-let openOnly = false;
-let monthFilter = 'all';
-let dayFilter = 'all';
-let allExpanded = true;
-let currentView = 'summary';
-
-const tfg = document.getElementById('time-fg');
-SLOTS.forEach(t => {{
-  const b = document.createElement('button');
-  b.className = 'btn time-btn on';
-  b.textContent = t;
-  b.dataset.time = t;
-  b.onclick = () => {{
-    b.classList.toggle('on');
-    if (activeTimes.has(t)) activeTimes.delete(t); else activeTimes.add(t);
-    applyFilters();
-  }};
-  tfg.appendChild(b);
-}});
-
-document.querySelectorAll('td[data-level]').forEach(td => {{
-  td.dataset.rawText = td.textContent;
-}});
-
-function matchesDateFilters(el) {{
-  if (monthFilter !== 'all' && el.dataset.monthGroup !== monthFilter) return false;
-  if (dayFilter !== 'all' && el.dataset.dayGroup !== dayFilter) return false;
-  return true;
-}}
-
-function applyTableFilters(table) {{
-  if (!table) return false;
-
-  const headers = Array.from(table.querySelectorAll('thead th[data-date-key]'));
-  const rows = Array.from(table.querySelectorAll('tbody tr.row-time'));
-  const visibleCols = {{}};
-
-  headers.forEach(th => {{
-    const key = th.dataset.dateKey;
-    const dateOk = matchesDateFilters(th);
-    if (!dateOk) {{
-      visibleCols[key] = false;
-      return;
-    }}
-    if (!openOnly) {{
-      visibleCols[key] = true;
-      return;
-    }}
-    visibleCols[key] = rows.some(tr =>
-      activeTimes.has(tr.dataset.time) &&
-      Array.from(tr.querySelectorAll(`td[data-date-key="${{key}}"]`)).some(td => td.dataset.level === 'open')
-    );
-  }});
-
-  headers.forEach(th => {{
-    th.style.display = visibleCols[th.dataset.dateKey] ? '' : 'none';
-  }});
-
-  let tableHasVisibleRow = false;
-  rows.forEach(tr => {{
-    const timeOk = activeTimes.has(tr.dataset.time);
-    let rowHasVisibleCell = false;
-
-    tr.querySelectorAll('td[data-date-key]').forEach(td => {{
-      const colVisible = !!visibleCols[td.dataset.dateKey];
-      const showText = !openOnly || td.dataset.level === 'open';
-      td.style.display = colVisible ? '' : 'none';
-      td.textContent = showText ? td.dataset.rawText : '';
-      if (colVisible && showText) rowHasVisibleCell = true;
-    }});
-
-    tr.style.display = timeOk && rowHasVisibleCell ? '' : 'none';
-    if (tr.style.display !== 'none') tableHasVisibleRow = true;
-  }});
-
-  return tableHasVisibleRow;
-}}
-
-function applyDateCards() {{
-  document.querySelectorAll('#view-date .facility').forEach(card => {{
-    const dateOk = matchesDateFilters(card);
-    if (!dateOk) {{
-      card.style.display = 'none';
-      return;
-    }}
-
-    const table = card.querySelector('table');
-    const facHeaders = Array.from(table.querySelectorAll('thead th.col-fac'));
-    const rows = Array.from(card.querySelectorAll('tbody tr.row-time'));
-    const visibleCols = facHeaders.map((_, idx) =>
-      rows.some(tr => activeTimes.has(tr.dataset.time) && tr.querySelectorAll('td[data-level]')[idx]?.dataset.level === 'open')
-    );
-
-    facHeaders.forEach((th, idx) => {{
-      th.style.display = !openOnly || visibleCols[idx] ? '' : 'none';
-    }});
-
-    let cardHasVisibleRow = false;
-    rows.forEach(tr => {{
-      const timeOk = activeTimes.has(tr.dataset.time);
-      let rowHasVisibleCell = false;
-      tr.querySelectorAll('td[data-level]').forEach((td, idx) => {{
-        const colVisible = !openOnly || visibleCols[idx];
-        const showText = !openOnly || td.dataset.level === 'open';
-        td.style.display = colVisible ? '' : 'none';
-        td.textContent = showText ? td.dataset.rawText : '';
-        if (colVisible && showText) rowHasVisibleCell = true;
-      }});
-      tr.style.display = timeOk && rowHasVisibleCell ? '' : 'none';
-      if (tr.style.display !== 'none') cardHasVisibleRow = true;
-    }});
-
-    card.style.display = cardHasVisibleRow ? '' : 'none';
-  }});
-}}
-
-function applyFilters() {{
-  applyTableFilters(document.querySelector('#view-summary table'));
-
-  document.querySelectorAll('#view-facility .facility').forEach(card => {{
-    const visible = applyTableFilters(card.querySelector('table'));
-    card.style.display = visible ? '' : 'none';
-  }});
-
-  applyDateCards();
-}}
-
-function toggleOpenOnly(btn) {{
-  openOnly = !openOnly;
-  btn.classList.toggle('on', openOnly);
-  applyFilters();
-}}
-
-function setMonth(btn) {{
-  document.querySelectorAll('.btn.month').forEach(b => b.classList.remove('on'));
-  btn.classList.add('on');
-  monthFilter = btn.dataset.month;
-  applyFilters();
-}}
-
-function setDay(btn) {{
-  document.querySelectorAll('.btn.day').forEach(b => b.classList.remove('on'));
-  btn.classList.add('on');
-  dayFilter = btn.dataset.day;
-  applyFilters();
-}}
-function setView(view, btn) {{
-  document.querySelectorAll('.tab').forEach(b => b.classList.remove('on'));
-  btn.classList.add('on');
-  document.getElementById('view-summary').classList.toggle('on', view === 'summary');
-  document.getElementById('view-facility').classList.toggle('on', view === 'facility');
-  document.getElementById('view-date').classList.toggle('on', view === 'date');
-  document.getElementById('expand-fg').style.display =
-    (view === 'facility' || view === 'date') ? '' : 'none';
-  currentView = view;
-}}
-function toggleBody(hd) {{
-  hd.classList.toggle('open');
-  hd.nextElementSibling.classList.toggle('open');
-}}
-function toggleAll() {{
-  allExpanded = !allExpanded;
-  const btn = document.getElementById('expand-btn');
-  btn.textContent = allExpanded ? '全折畳' : '全展開';
-  btn.classList.toggle('on', allExpanded);
-  const sel = currentView === 'date' ? '#view-date .fac-hd' : '#view-facility .fac-hd';
-  document.querySelectorAll(sel).forEach(hd => {{
-    hd.classList.toggle('open', allExpanded);
-    hd.nextElementSibling.classList.toggle('open', allExpanded);
-  }});
-}}
-function resetAll() {{
-  openOnly = false;
-  monthFilter = 'all';
-  dayFilter = 'all';
-  activeTimes = new Set(SLOTS);
-  document.getElementById('open-only-btn').classList.remove('on');
-  document.querySelectorAll('.btn.month').forEach(b => b.classList.remove('on'));
-  document.querySelector('.btn.month[data-month="all"]').classList.add('on');
-  document.querySelectorAll('.btn.time-btn').forEach(b => b.classList.add('on'));
-  document.querySelectorAll('.btn.day').forEach(b => b.classList.remove('on'));
-  document.querySelector('.btn.day[data-day="all"]').classList.add('on');
-  applyFilters();
-}}
-
-applyFilters();
-</script>
+<script>location.replace('app.html?src={src}');</script>
 </body>
 </html>'''
 
     with open(output_path, 'w', encoding='utf-8') as f:
         f.write(html)
     print(f"HTML 保存完了: {output_path}")
+
+
+def build_reservation_json(all_data, today, end_date):
+    all_dates = sorted(
+        {date_str for schedule in all_data.values() for date_str in schedule.keys()},
+        key=date_sort_key,
+    )
+    all_times = sorted(
+        {time_code for schedule in all_data.values() for times in schedule.values() for time_code in times.keys()},
+        key=lambda value: format_time(value),
+    )
+
+    date_items = []
+    for date_str in all_dates:
+        meta = date_meta(date_str, today.date())
+        actual = actual_date_from_label(date_str, today.date())
+        date_items.append({
+            'key': meta['key'],
+            'source_label': date_str,
+            'label': date_label(date_str, meta),
+            'short_label': short_date(date_str),
+            'iso_date': actual.isoformat() if actual else None,
+            'month_group': meta['month_group'],
+            'day_group': meta['day_group'],
+            'is_holiday': meta['is_holiday'],
+            'holiday_name': meta['holiday_name'],
+        })
+
+    time_items = [{
+        'key': normalize_time_code(time_code),
+        'source_label': time_code,
+        'label': format_time(time_code),
+    } for time_code in all_times]
+
+    facilities = []
+    cells = {}
+    for index, facility_name in enumerate(all_data.keys(), start=1):
+        facility_key = f'court_{index}'
+        facilities.append({
+            'key': facility_key,
+            'name': facility_name,
+            'short_name': short_facility_name(facility_name),
+        })
+        facility_cells = {}
+        schedule = all_data[facility_name]
+        for date_str in all_dates:
+            actual = actual_date_from_label(date_str, today.date())
+            if actual is None:
+                continue
+            date_key = actual.isoformat()
+            date_cells = {}
+            for time_code in all_times:
+                raw_value = schedule.get(date_str, {}).get(time_code, '-')
+                state = cell_class(raw_value) or 'other'
+                date_cells[normalize_time_code(time_code)] = {
+                    'status': state,
+                    'text': cell_display(raw_value, state),
+                    'raw': raw_value,
+                }
+            facility_cells[date_key] = date_cells
+        cells[facility_key] = facility_cells
+
+    return {
+        'version': 1,
+        'mode': 'reservation',
+        'generated_at': today.isoformat(timespec='minutes'),
+        'timezone': 'Asia/Tokyo',
+        'page': {
+            'title': '富士見テニスコート 予約空き状況',
+            'legend': '12面の中で最も空きがある枠を表示',
+            'facility_group': TARGET_FACILITY,
+        },
+        'range': {
+            'start': today.date().isoformat(),
+            'end': end_date.isoformat(),
+        },
+        'filters': {
+            'month': True,
+            'day_type': True,
+            'time': True,
+            'open_only': True,
+            'status_buttons': [],
+        },
+        'dates': date_items,
+        'time_slots': time_items,
+        'facilities': facilities,
+        'cells': cells,
+    }
 
 
 if __name__ == "__main__":
@@ -910,16 +528,13 @@ if __name__ == "__main__":
     os.makedirs(docs_dir, exist_ok=True)
 
     # JSON保存
-    import json
     json_path = os.path.join(docs_dir, "rsv.json")
+    json_data = build_reservation_json(all_data, today, end_date)
     with open(json_path, 'w', encoding='utf-8') as f:
-        json.dump({
-            'updated': today.strftime('%Y-%m-%d %H:%M'),
-            'data': all_data,
-        }, f, ensure_ascii=False, indent=2)
+        json.dump(json_data, f, ensure_ascii=False, indent=2)
     print(f"JSON 保存完了: {json_path}")
 
     output_path = os.path.join(docs_dir, "rsv.html")
-    write_rsv_html(all_data, output_path)
+    write_app_entry(output_path, "rsv.json")
 
     print(f"\n{'=' * 60}\n完了！")

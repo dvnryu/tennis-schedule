@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "mode": "lottery",
+  "generated_at": "2026-03-11T15:24+09:00",
+  "timezone": "Asia/Tokyo",
+  "page": {
+    "title": "富士見テニスコート 抽選申込状況",
+    "legend": "現在は抽選申込み対象外、または確認中です。",
+    "facility_group": "富士見テニスコート"
+  },
+  "range": {
+    "start": null,
+    "end": null
+  },
+  "filters": {
+    "month": false,
+    "day_type": true,
+    "time": true,
+    "open_only": false,
+    "status_buttons": [
+      "hot",
+      "easy",
+      "medium",
+      "hard"
+    ]
+  },
+  "dates": [],
+  "time_slots": [],
+  "facilities": [],
+  "cells": {}
+}

@@ -2,6 +2,7 @@ name: Update Tennis Data
 
 on:
   schedule:
+    # GitHub Actions cron uses UTC. This still runs every 30 minutes in JST.
     - cron: '0,30 * * * *'
   workflow_dispatch:
 
@@ -49,7 +50,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add docs/lot.html docs/rsv.html docs/rsv.json
+          git add docs/index.html docs/app.html docs/app.css docs/app.js docs/lot.html docs/rsv.html docs/rsv.json docs/lottery.json
           if git diff --staged --quiet; then
             echo "No changes to commit"
             exit 0

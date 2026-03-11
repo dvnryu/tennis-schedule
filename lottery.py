@@ -4,6 +4,15 @@ from bs4 import BeautifulSoup
 import re
 import warnings
 from datetime import datetime, timedelta, timezone
+import json
+
+from lib.schema import (
+    format_time_label,
+    normalize_time_code,
+    parse_japanese_date_label,
+    short_date_label,
+    short_facility_name,
+)
 
 warnings.filterwarnings('ignore')
 
@@ -159,6 +168,9 @@ def navigate_to_facility_list(session, menu_soup):
         if '受付済' in soup.get_text():
             print("Step 6 ℹ️ 本期抽签已受理（受付済），申请入口已关闭，无需更新")
             exit(0)
+        if '確認中' in soup.get_text():
+            print("Step 6 ℹ️ 本期抽签处于確認中，暂无申込み入口")
+            return None
         print("Step 6 ❌ 没找到申込みボタン")
         print("  页面内容:", soup.get_text()[:300])
         return None
@@ -308,12 +320,7 @@ def get_full_month_schedule(session, facility_soup, facility, start_ymd=None):
 
 def format_time(code):
     """0900 → 09:00"""
-    code = code.replace('０', '0').replace('１', '1').replace('２', '2').replace('３', '3') \
-               .replace('４', '4').replace('５', '5').replace('６', '6').replace('７', '7') \
-               .replace('８', '8').replace('９', '9')
-    if len(code) == 4 and code.isdigit():
-        return f"{code[:2]}:{code[2:]}"
-    return code
+    return format_time_label(code)
 
 
 def date_sort_key(d):
@@ -326,10 +333,7 @@ def date_sort_key(d):
 
 def short_date(d):
     """'3月1日日曜日' → '3/1(日)'"""
-    m = re.match(r'(\d+)月(\d+)日(.)', d)
-    if m:
-        return f"{m.group(1)}/{m.group(2)}({m.group(3)})"
-    return d[:6]
+    return short_date_label(d)
 
 
 def is_weekend(d):
@@ -354,380 +358,139 @@ def cell_class(val):
     return 'hard'           # 竞争激烈
 
 
-def write_html(all_data, output_path):
-    """生成 HTML 报告"""
-    today = now_jst()
-    next_month = today.month + 1 if today.month < 12 else 1
-    now = today.strftime('%Y-%m-%d %H:%M')
-
-    # 收集所有时段和日期
-    all_times_set = set()
-    all_dates_set = set()
-    for schedule in all_data.values():
-        for date, times in schedule.items():
-            all_dates_set.add(date)
-            all_times_set.update(times.keys())
-    time_slots_raw = sorted(all_times_set, key=lambda t: format_time(t))
-    fmt_slots = [format_time(ts) for ts in time_slots_raw]
-    all_dates = sorted(all_dates_set, key=date_sort_key)
-    slots_json = '[' + ','.join(f'"{s}"' for s in fmt_slots) + ']'
-
-    # ── 汇总数据：{日期: {时段: 最优val}} ──
-    # 对每个日期+时段，找申请人数最少（最容易中签）的那面球场的值
-    summary = {d: {ft: None for ft in fmt_slots} for d in all_dates}
-    for schedule in all_data.values():
-        for date, times in schedule.items():
-            for ts, val in times.items():
-                ft = format_time(ts)
-                cur = summary[date][ft]
-                if val == '-':
-                    continue
-                m = re.match(r'\d+/(\d+)', val)
-                if not m:
-                    continue
-                applicants = int(m.group(1))
-                if cur is None:
-                    summary[date][ft] = (applicants, val)
-                elif applicants < cur[0]:
-                    summary[date][ft] = (applicants, val)
-
-    # 汇总表
-    sum_hdr = '<tr><th class="col-time">時間</th>'
-    for d in all_dates:
-        cls = 'col-we' if is_weekend(d) else 'col-wd'
-        sum_hdr += f'<th class="{cls}">{short_date(d)}</th>'
-    sum_hdr += '</tr>'
-
-    sum_body = ''
-    for ts in time_slots_raw:
-        ft = format_time(ts)
-        sum_body += f'<tr class="row-time" data-time="{ft}"><td class="col-time">{ft}</td>'
-        for d in all_dates:
-            entry = summary[d][ft]
-            if entry is None:
-                val, lv = '-', 'unavailable'
-            else:
-                val = entry[1]
-                lv = cell_class(val) or 'unavailable'
-            display = f'★{val}' if lv == 'hot' else val
-            we_cls = 'col-we' if is_weekend(d) else 'col-wd'
-            sum_body += f'<td class="{we_cls} lv-{lv}" data-level="{lv}">{display}</td>'
-        sum_body += '</tr>'
-
-    sum_html = f'<div class="tbl-wrap"><table><thead>{sum_hdr}</thead><tbody>{sum_body}</tbody></table></div>'
-
-    # ── 场地明细 ──
-    fac_html = ''
-    for fac_name, schedule in all_data.items():
-        if not schedule:
-            continue
-        dates = sorted(schedule.keys(), key=date_sort_key)
-
-        hdr = '<tr><th class="col-time">時間</th>'
-        for d in dates:
-            cls = 'col-we' if is_weekend(d) else 'col-wd'
-            hdr += f'<th class="{cls}">{short_date(d)}</th>'
-        hdr += '</tr>'
-
-        body = ''
-        for ts in time_slots_raw:
-            ft = format_time(ts)
-            body += f'<tr class="row-time" data-time="{ft}"><td class="col-time">{ft}</td>'
-            for d in dates:
-                val = schedule.get(d, {}).get(ts, '-')
-                cc = cell_class(val)
-                lv = cc if cc else 'other'
-                we_cls = 'col-we' if is_weekend(d) else 'col-wd'
-                display = f'★{val}' if cc == 'hot' else val
-                body += f'<td class="{we_cls} lv-{lv}" data-level="{lv}">{display}</td>'
-            body += '</tr>'
-
-        fac_html += f'''<div class="facility">
-<div class="fac-hd" onclick="toggleBody(this)">{fac_name}<span class="arrow">▼</span></div>
-<div class="fac-bd open"><div class="tbl-wrap"><table><thead>{hdr}</thead><tbody>{body}</tbody></table></div></div>
-</div>\n'''
-
-
-    # ── 日付別视图 ──
-    fac_names = list(all_data.keys())
-    # 简短名：富士見テニス場１ → 場1
-    import unicodedata
-    def short_fac(name):
-        n = unicodedata.normalize('NFKC', name)
-        m = re.search(r'(\d+)$', n)
-        return f'場{m.group(1)}' if m else name[-3:]
-
-    short_names = [short_fac(n) for n in fac_names]
-
-    date_html = ''
-    for d in all_dates:
-        we_cls = 'we-date' if is_weekend(d) else ''
-        hdr = '<tr><th class="col-time">時間</th>'
-        for fn in short_names:
-            hdr += f'<th class="col-fac">{fn}</th>'
-        hdr += '</tr>'
-
-        body = ''
-        for ts in time_slots_raw:
-            ft = format_time(ts)
-            body += f'<tr class="row-time" data-time="{ft}"><td class="col-time">{ft}</td>'
-            for fac_name in fac_names:
-                val = all_data[fac_name].get(d, {}).get(ts, '-')
-                cc = cell_class(val)
-                lv = cc if cc else 'other'
-                display = f'★{val}' if cc == 'hot' else val
-                body += f'<td class="lv-{lv}" data-level="{lv}">{display}</td>'
-            body += '</tr>'
-
-        data_we = '1' if is_weekend(d) else '0'
-        date_html += f'''<div class="facility {we_cls}" data-we="{data_we}">
-<div class="fac-hd" onclick="toggleBody(this)">{short_date(d)}<span class="arrow">▼</span></div>
-<div class="fac-bd open"><div class="tbl-wrap"><table><thead>{hdr}</thead><tbody>{body}</tbody></table></div></div>
-</div>\n'''
-
+def write_app_entry(output_path, src):
     html = f'''<!DOCTYPE html>
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="refresh" content="0; url=app.html?src={src}">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>富士見テニスコート 抽選申込状況</title>
-<style>
-*{{margin:0;padding:0;box-sizing:border-box}}
-:root{{
-  --bg:#0a0f1e;--card:#111827;--border:#1e293b;--text:#e2e8f0;--muted:#64748b;
-  --hot-bg:#064e3b;--hot-fg:#6ee7b7;
-  --easy-bg:#0c2340;--easy-fg:#7dd3fc;
-  --med-bg:#451a03;--med-fg:#fde68a;
-  --hard-bg:#450a0a;--hard-fg:#fca5a5;
-  --na-bg:#0d1424;--na-fg:#2d3e58;
-  --we-tint:rgba(139,92,246,.06);
-}}
-body{{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}}
-
-/* Header */
-.sticky-nav{{position:sticky;top:0;z-index:200}}
-.site-header{{background:linear-gradient(135deg,#0f172a,#1e1b4b);border-bottom:1px solid var(--border);padding:16px 20px 12px}}
-.site-title{{font-size:1.25em;font-weight:700;background:linear-gradient(135deg,#22d3ee,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}}
-.site-meta{{font-size:.74em;color:var(--muted);margin-top:3px}}
-
-/* Toolbar */
-.toolbar{{background:#0d1424;border-bottom:1px solid var(--border)}}
-.tabs{{display:flex;gap:2px;padding:10px 20px 0}}
-.tab{{padding:7px 18px;border-radius:8px 8px 0 0;border:1px solid transparent;background:transparent;color:var(--muted);cursor:pointer;font-size:.85em;font-weight:500;transition:all .15s}}
-.tab:hover{{color:var(--text)}}
-.tab.on{{background:var(--card);border-color:var(--border);border-bottom-color:var(--card);color:var(--text)}}
-.filters{{display:flex;flex-wrap:wrap;gap:8px 18px;padding:10px 20px;align-items:center}}
-.fg{{display:flex;flex-wrap:wrap;gap:5px;align-items:center}}
-.flabel{{font-size:.72em;color:var(--muted);white-space:nowrap;margin-right:2px}}
-.btn{{padding:3px 11px;border-radius:20px;border:1px solid #2d3e58;background:transparent;color:var(--muted);cursor:pointer;font-size:.78em;white-space:nowrap;transition:all .15s}}
-.btn:hover{{border-color:#475569;color:var(--text)}}
-.btn.on{{border-color:transparent;color:#fff}}
-.btn.lv-hot.on{{background:#065f46;border-color:#059669;color:#6ee7b7}}
-.btn.lv-easy.on{{background:#0c2340;border-color:#0284c7;color:#7dd3fc}}
-.btn.lv-medium.on{{background:#451a03;border-color:#b45309;color:#fde68a}}
-.btn.lv-hard.on{{background:#450a0a;border-color:#b91c1c;color:#fca5a5}}
-.btn.day.on,.btn.expand-btn.on{{background:#1e3a5f;border-color:#0284c7;color:#7dd3fc}}
-.btn.time-btn.on{{background:#1e293b;border-color:#334155;color:var(--text)}}
-.btn.reset{{border-color:#334155}}
-
-/* Views */
-.main{{padding:12px 20px;display:flex;flex-direction:column;gap:10px}}
-.view{{display:none}}.view.on{{display:flex;flex-direction:column;gap:10px}}
-.sum-legend{{font-size:.74em;color:var(--muted);padding:6px 2px}}
-
-/* Facility cards */
-.facility{{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden}}
-.fac-hd{{padding:10px 16px;font-size:.93em;font-weight:600;cursor:pointer;user-select:none;display:flex;justify-content:space-between;align-items:center;background:linear-gradient(90deg,#1e3a5f18,transparent);transition:background .15s}}
-.fac-hd:hover{{background:linear-gradient(90deg,#1e3a5f44,transparent)}}
-.arrow{{font-size:.75em;color:var(--muted);transition:transform .2s}}
-.fac-hd.open .arrow{{transform:rotate(180deg)}}
-.fac-bd{{display:none}}.fac-bd.open{{display:block}}
-
-/* Table */
-.tbl-wrap{{overflow-x:auto;padding-bottom:4px}}
-table{{border-collapse:collapse;font-size:.82em;white-space:nowrap}}
-thead th{{padding:6px 9px;text-align:center;background:#141e30;border-bottom:2px solid var(--border);font-weight:600;position:sticky;top:0;z-index:10}}
-thead th.col-we{{background:#1a1232}}
-thead th.col-time{{position:sticky;left:0;z-index:20;background:#0f1829}}
-tbody tr:hover td{{filter:brightness(1.18)}}
-tbody td{{padding:5px 9px;text-align:center;border-top:1px solid #161f30}}
-tbody td.col-time{{background:#0f1829;font-weight:600;text-align:center;position:sticky;left:0;z-index:5;border-right:1px solid var(--border)}}
-tbody td.col-we{{background:var(--we-tint)}}
-td.lv-hot{{background:var(--hot-bg);color:var(--hot-fg);font-weight:700}}
-td.lv-easy{{background:var(--easy-bg);color:var(--easy-fg)}}
-td.lv-medium{{background:var(--med-bg);color:var(--med-fg)}}
-td.lv-hard{{background:var(--hard-bg);color:var(--hard-fg)}}
-td.lv-unavailable,td.lv-other{{background:var(--na-bg);color:var(--na-fg)}}
-
-/* Filter states */
-body.hide-wd .col-wd{{display:none}}
-body.hide-we .col-we{{display:none}}
-body.hide-we #view-date .facility[data-we="1"]{{display:none}}
-body.hide-wd #view-date .facility[data-we="0"]{{display:none}}
-body.dim-mode td[data-level]{{opacity:.07}}
-body.dim-mode td.col-time{{opacity:1!important}}
-body.dim-mode td.lv-show{{opacity:1}}
-
-.we-date > .fac-hd{{background:linear-gradient(90deg,#2d1f4e44,transparent)}}
-@media(max-width:640px){{
-  .site-header,.filters,.tabs,.main{{padding-left:10px;padding-right:10px}}
-  table{{font-size:.74em}}tbody td{{padding:4px 5px}}
-}}
-</style>
+<title>Redirecting...</title>
 </head>
 <body>
-
-<div class="sticky-nav">
-<header class="site-header">
-  <a href="index.html" style="display:inline-block;font-size:.75em;color:#64748b;text-decoration:none;margin-bottom:8px;" onmouseover="this.style.color='#94a3b8'" onmouseout="this.style.color='#64748b'">← ホームへ</a>
-  <div class="site-title">🎾 富士見テニスコート 抽選申込状況</div>
-  <div class="site-meta">更新: {now} &nbsp;·&nbsp; {next_month}月 &nbsp;·&nbsp; 表示: 名額/申請数</div>
-</header>
-
-<div class="toolbar">
-  <div class="tabs">
-    <button class="tab on" onclick="setView('summary',this)">サマリー</button>
-    <button class="tab" onclick="setView('facility',this)">場別</button>
-    <button class="tab" onclick="setView('date',this)">日付別</button>
-  </div>
-  <div class="filters">
-    <div class="fg">
-      <span class="flabel">難易度</span>
-      <button class="btn lv-hot" data-lv="hot" onclick="toggleLv(this)">★ 必中(0人)</button>
-      <button class="btn lv-easy" data-lv="easy" onclick="toggleLv(this)">● 容易(1-3)</button>
-      <button class="btn lv-medium" data-lv="medium" onclick="toggleLv(this)">△ 一般(4-10)</button>
-      <button class="btn lv-hard" data-lv="hard" onclick="toggleLv(this)">× 激戦(11+)</button>
-    </div>
-    <div class="fg">
-      <span class="flabel">曜日</span>
-      <button class="btn day on" data-day="all" onclick="setDay(this)">全部</button>
-      <button class="btn day" data-day="wd" onclick="setDay(this)">平日</button>
-      <button class="btn day" data-day="we" onclick="setDay(this)">週末</button>
-    </div>
-    <div class="fg" id="time-fg">
-      <span class="flabel">時間</span>
-    </div>
-    <div class="fg" id="expand-fg" style="display:none">
-      <button class="btn expand-btn on" id="expand-btn" onclick="toggleAll()">全折畳</button>
-    </div>
-    <button class="btn reset" onclick="resetAll()">リセット</button>
-  </div>
-</div>
-</div>
-
-<div class="main">
-  <div class="view on" id="view-summary">
-    <div class="sum-legend">12面の中で一番申請が少ないコートの数値を表示 &nbsp;·&nbsp; 緑＝必中、青＝容易、黄＝一般、赤＝激戦</div>
-    <div class="facility">
-      {sum_html}
-    </div>
-  </div>
-  <div class="view" id="view-facility">
-{fac_html}  </div>
-  <div class="view" id="view-date">
-{date_html}  </div>
-</div>
-
-<script>
-const SLOTS = {slots_json};
-const activeLvs = new Set();
-let activeTimes = new Set(SLOTS);
-let allExpanded = true;
-let currentView = 'summary';
-
-const tfg = document.getElementById('time-fg');
-SLOTS.forEach(t => {{
-  const b = document.createElement('button');
-  b.className = 'btn time-btn on';
-  b.textContent = t;
-  b.dataset.time = t;
-  b.onclick = () => {{
-    b.classList.toggle('on');
-    if (activeTimes.has(t)) activeTimes.delete(t); else activeTimes.add(t);
-    applyTime();
-  }};
-  tfg.appendChild(b);
-}});
-
-function applyTime() {{
-  document.querySelectorAll('.row-time').forEach(tr => {{
-    tr.style.display = activeTimes.has(tr.dataset.time) ? '' : 'none';
-  }});
-}}
-
-function toggleLv(btn) {{
-  btn.classList.toggle('on');
-  const lv = btn.dataset.lv;
-  if (activeLvs.has(lv)) activeLvs.delete(lv); else activeLvs.add(lv);
-  applyLv();
-}}
-
-function applyLv() {{
-  if (activeLvs.size === 0) {{
-    document.body.classList.remove('dim-mode');
-    document.querySelectorAll('td.lv-show').forEach(td => td.classList.remove('lv-show'));
-  }} else {{
-    document.body.classList.add('dim-mode');
-    document.querySelectorAll('td[data-level]').forEach(td => {{
-      td.classList.toggle('lv-show', activeLvs.has(td.dataset.level));
-    }});
-  }}
-}}
-
-function setDay(btn) {{
-  document.querySelectorAll('.btn.day').forEach(b => b.classList.remove('on'));
-  btn.classList.add('on');
-  document.body.classList.remove('hide-wd', 'hide-we');
-  const d = btn.dataset.day;
-  if (d === 'wd') document.body.classList.add('hide-we');
-  if (d === 'we') document.body.classList.add('hide-wd');
-}}
-
-function setView(view, btn) {{
-  document.querySelectorAll('.tab').forEach(b => b.classList.remove('on'));
-  btn.classList.add('on');
-  document.getElementById('view-summary').classList.toggle('on', view === 'summary');
-  document.getElementById('view-facility').classList.toggle('on', view === 'facility');
-  document.getElementById('view-date').classList.toggle('on', view === 'date');
-  document.getElementById('expand-fg').style.display = (view === 'facility' || view === 'date') ? '' : 'none';
-  currentView = view;
-}}
-
-function toggleBody(hd) {{
-  hd.classList.toggle('open');
-  hd.nextElementSibling.classList.toggle('open');
-}}
-
-function toggleAll() {{
-  allExpanded = !allExpanded;
-  const btn = document.getElementById('expand-btn');
-  btn.textContent = allExpanded ? '全折畳' : '全展開';
-  btn.classList.toggle('on', allExpanded);
-  const sel = currentView === 'date' ? '#view-date .fac-hd' : '#view-facility .fac-hd';
-  document.querySelectorAll(sel).forEach(hd => {{
-    hd.classList.toggle('open', allExpanded);
-    hd.nextElementSibling.classList.toggle('open', allExpanded);
-  }});
-}}
-
-function resetAll() {{
-  activeLvs.clear();
-  activeTimes = new Set(SLOTS);
-  document.querySelectorAll('.btn[data-lv]').forEach(b => b.classList.remove('on'));
-  document.querySelectorAll('.btn.time-btn').forEach(b => b.classList.add('on'));
-  document.querySelectorAll('.btn.day').forEach(b => b.classList.remove('on'));
-  document.querySelector('.btn.day[data-day="all"]').classList.add('on');
-  document.body.classList.remove('dim-mode', 'hide-wd', 'hide-we');
-  document.querySelectorAll('td.lv-show').forEach(td => td.classList.remove('lv-show'));
-  document.querySelectorAll('.row-time').forEach(tr => tr.style.display = '');
-}}
-</script>
+<script>location.replace('app.html?src={src}');</script>
 </body>
 </html>'''
 
     with open(output_path, 'w', encoding='utf-8') as f:
         f.write(html)
     print(f"HTML 报告已保存: {output_path}")
+
+
+def build_lottery_json(all_data, today):
+    all_dates = sorted(
+        {date_str for schedule in all_data.values() for date_str in schedule.keys()},
+        key=date_sort_key,
+    )
+    all_times = sorted(
+        {time_code for schedule in all_data.values() for times in schedule.values() for time_code in times.keys()},
+        key=lambda value: format_time(value),
+    )
+
+    date_items = []
+    iso_dates = []
+    for date_str in all_dates:
+        actual = parse_japanese_date_label(date_str, today.date())
+        iso_dates.append(actual.isoformat() if actual else None)
+        date_items.append({
+            'key': actual.isoformat() if actual else date_str,
+            'source_label': date_str,
+            'label': short_date(date_str),
+            'short_label': short_date(date_str),
+            'iso_date': actual.isoformat() if actual else None,
+            'month_group': 'next',
+            'day_group': 'special' if is_weekend(date_str) else 'weekday',
+            'is_holiday': False,
+            'holiday_name': '',
+        })
+
+    facilities = []
+    cells = {}
+    for index, facility_name in enumerate(all_data.keys(), start=1):
+        facility_key = f'court_{index}'
+        facilities.append({
+            'key': facility_key,
+            'name': facility_name,
+            'short_name': short_facility_name(facility_name),
+        })
+        facility_cells = {}
+        schedule = all_data[facility_name]
+        for date_str, date_key in zip(all_dates, iso_dates):
+            if date_key is None:
+                continue
+            time_cells = {}
+            for time_code in all_times:
+                raw_value = schedule.get(date_str, {}).get(time_code, '-')
+                status = cell_class(raw_value) or 'other'
+                text = f'★{raw_value}' if status == 'hot' else raw_value
+                time_cells[normalize_time_code(time_code)] = {
+                    'status': status,
+                    'text': text,
+                    'raw': raw_value,
+                }
+            facility_cells[date_key] = time_cells
+        cells[facility_key] = facility_cells
+
+    start_candidates = [item['iso_date'] for item in date_items if item['iso_date']]
+    return {
+        'version': 1,
+        'mode': 'lottery',
+        'generated_at': today.isoformat(timespec='minutes'),
+        'timezone': 'Asia/Tokyo',
+        'page': {
+            'title': '富士見テニスコート 抽選申込状況',
+            'legend': '12面の中で一番申請が少ないコートの数値を表示',
+            'facility_group': '富士見テニスコート',
+        },
+        'range': {
+            'start': min(start_candidates) if start_candidates else None,
+            'end': max(start_candidates) if start_candidates else None,
+        },
+        'filters': {
+            'month': False,
+            'day_type': True,
+            'time': True,
+            'open_only': False,
+            'status_buttons': ['hot', 'easy', 'medium', 'hard'],
+        },
+        'dates': date_items,
+        'time_slots': [{
+            'key': normalize_time_code(time_code),
+            'source_label': time_code,
+            'label': format_time(time_code),
+        } for time_code in all_times],
+        'facilities': facilities,
+        'cells': cells,
+    }
+
+
+def build_empty_lottery_json(today):
+    return {
+        'version': 1,
+        'mode': 'lottery',
+        'generated_at': today.isoformat(timespec='minutes'),
+        'timezone': 'Asia/Tokyo',
+        'page': {
+            'title': '富士見テニスコート 抽選申込状況',
+            'legend': '現在は抽選申込み対象外、または確認中です。',
+            'facility_group': '富士見テニスコート',
+        },
+        'range': {
+            'start': None,
+            'end': None,
+        },
+        'filters': {
+            'month': False,
+            'day_type': True,
+            'time': True,
+            'open_only': False,
+            'status_buttons': ['hot', 'easy', 'medium', 'hard'],
+        },
+        'dates': [],
+        'time_slots': [],
+        'facilities': [],
+        'cells': {},
+    }
 
 
 if __name__ == "__main__":
@@ -745,8 +508,17 @@ if __name__ == "__main__":
     # Step 2~7: 导航到场地列表
     print()
     facility_soup = navigate_to_facility_list(session, menu_soup)
+    docs_dir = os.path.join(os.path.dirname(__file__), "docs")
+    os.makedirs(docs_dir, exist_ok=True)
     if not facility_soup:
-        exit(1)
+        json_path = os.path.join(docs_dir, "lottery.json")
+        with open(json_path, 'w', encoding='utf-8') as f:
+            json.dump(build_empty_lottery_json(now_jst()), f, ensure_ascii=False, indent=2)
+        print(f"JSON 报告已保存: {json_path}")
+        output_path = os.path.join(docs_dir, "lot.html")
+        write_app_entry(output_path, "lottery.json")
+        print("\n抽选当前无可更新数据，已写出空页面数据。")
+        exit(0)
 
     # 解析场地列表
     facilities = parse_facility_list(facility_soup)
@@ -766,10 +538,14 @@ if __name__ == "__main__":
         all_data[facility['name']] = schedule
         print(f"  ✅ 获取了 {len(schedule)} 天的数据")
 
+    json_path = os.path.join(docs_dir, "lottery.json")
+    with open(json_path, 'w', encoding='utf-8') as f:
+        json.dump(build_lottery_json(all_data, now_jst()), f, ensure_ascii=False, indent=2)
+    print(f"JSON 报告已保存: {json_path}")
+
     # 输出 HTML
-    output_path = os.path.join(os.path.dirname(__file__), "docs", "lot.html")
-    os.makedirs(os.path.dirname(output_path), exist_ok=True)
-    write_html(all_data, output_path)
+    output_path = os.path.join(docs_dir, "lot.html")
+    write_app_entry(output_path, "lottery.json")
 
     print(f"\n{'=' * 60}")
     print("完成！")
