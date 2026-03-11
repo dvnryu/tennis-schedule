@@ -1,10 +1,13 @@
-name: Update Tennis Schedule
+name: Update Tennis Data
 
 on:
   schedule:
-    # 每 30 分钟触发一次，在 job 内判断日本时间是否为每月 1-8 号
     - cron: '0,30 * * * *'
-  workflow_dispatch: # 支持手动触发
+  workflow_dispatch:
+
+concurrency:
+  group: tennis-data-main
+  cancel-in-progress: false
 
 permissions:
   contents: write
@@ -13,25 +16,9 @@ env:
   TZ: Asia/Tokyo
 
 jobs:
-  check:
+  update-data:
     runs-on: ubuntu-latest
-    outputs:
-      should_run: ${{ steps.check_date.outputs.should_run }}
-    steps:
-      - id: check_date
-        run: |
-          JST_DAY=$(TZ=Asia/Tokyo date +%-d)
-          echo "日本时间今天是 ${JST_DAY} 号"
-          if [ "$JST_DAY" -ge 1 ] && [ "$JST_DAY" -le 8 ]; then
-            echo "should_run=true" >> $GITHUB_OUTPUT
-          else
-            echo "should_run=false" >> $GITHUB_OUTPUT
-          fi
 
-  update:
-    needs: check
-    if: needs.check.outputs.should_run == 'true'
-    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
@@ -42,39 +29,31 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Fetch schedule data
+      - name: Fetch lottery data during application window
         env:
           FUREAI_USER_ID: ${{ secrets.FUREAI_USER_ID }}
           FUREAI_PASSWORD: ${{ secrets.FUREAI_PASSWORD }}
-        run: python main.py
-
-      - name: Commit and push
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add docs/lot.html
-          git diff --staged --quiet || git commit -m "update schedule $(date +%Y-%m-%d)"
-          git push
-
-  update-rsv:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Install dependencies
-        run: pip install -r requirements.txt
+          JST_DAY=$(date +%-d)
+          echo "Japan day-of-month: ${JST_DAY}"
+          if [ "$JST_DAY" -ge 1 ] && [ "$JST_DAY" -le 8 ]; then
+            python lottery.py
+          else
+            echo "Skipping lottery.py outside the 1-8 JST lottery window"
+          fi
 
       - name: Fetch reservation vacancy data
-        run: python rsv.py
+        run: python reservation.py
 
       - name: Commit and push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add docs/rsv.html docs/rsv.json
-          git diff --staged --quiet || git commit -m "update rsv $(date +%Y-%m-%d)"
-          git push
+          git add docs/lot.html docs/rsv.html docs/rsv.json
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          git commit -m "update tennis data $(date +%Y-%m-%d)"
+          git pull --rebase origin main
+          git push origin main
