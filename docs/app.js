@@ -99,12 +99,20 @@ function getModeConfig(mode) {
 
 function buildMeta(payload) {
   const parts = [];
-  if (payload.generated_at) parts.push(`更新: ${escapeHtml(payload.generated_at)}`);
+  if (payload.generated_at) parts.push(`更新: ${escapeHtml(formatGeneratedAt(payload.generated_at, payload.timezone))}`);
   if (payload.page?.facility_group) parts.push(escapeHtml(payload.page.facility_group));
   if (payload.range?.start && payload.range?.end) {
-    parts.push(`${escapeHtml(payload.range.start)} → ${escapeHtml(payload.range.end)}`);
+    parts.push(`対象期間: ${escapeHtml(payload.range.start)} ～ ${escapeHtml(payload.range.end)}`);
   }
   return parts.join(' &nbsp;·&nbsp; ');
+}
+
+function formatGeneratedAt(value, timezone) {
+  const text = String(value ?? '').replace('T', ' ');
+  if (timezone === 'Asia/Tokyo' && text.endsWith('+09:00')) {
+    return `${text.slice(0, -6)} JST`;
+  }
+  return text;
 }
 
 function renderFilterControls(root, payload, modeConfig, state, timeSlots) {

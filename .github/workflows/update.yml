@@ -2,8 +2,8 @@ name: Update Tennis Data
 
 on:
   schedule:
-    # GitHub Actions cron uses UTC. This still runs every 30 minutes in JST.
-    - cron: '0,30 * * * *'
+    # GitHub Actions cron uses UTC. This runs every 15 minutes in JST as well.
+    - cron: '*/15 * * * *'
   workflow_dispatch:
 
 concurrency:
