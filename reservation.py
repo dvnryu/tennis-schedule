@@ -12,6 +12,26 @@ warnings.filterwarnings('ignore')
 BASE_URL = "https://www.fureai-net.city.kawasaki.jp/web"
 TARGET_FACILITY = '富士見テニスコート'
 JST = timezone(timedelta(hours=9), name="JST")
+JAPAN_HOLIDAYS = {
+    "2026-01-01": "元日",
+    "2026-01-12": "成人の日",
+    "2026-02-11": "建国記念の日",
+    "2026-02-23": "天皇誕生日",
+    "2026-03-20": "春分の日",
+    "2026-04-29": "昭和の日",
+    "2026-05-03": "憲法記念日",
+    "2026-05-04": "みどりの日",
+    "2026-05-05": "こどもの日",
+    "2026-05-06": "休日",
+    "2026-07-20": "海の日",
+    "2026-08-11": "山の日",
+    "2026-09-21": "敬老の日",
+    "2026-09-22": "休日",
+    "2026-09-23": "秋分の日",
+    "2026-10-12": "スポーツの日",
+    "2026-11-03": "文化の日",
+    "2026-11-23": "勤労感謝の日",
+}
 
 
 def now_jst():
@@ -287,8 +307,53 @@ def short_date(d):
     return f"{m.group(1)}/{m.group(2)}({m.group(3)})" if m else d[:7]
 
 
-def is_weekend(d):
-    return '土曜日' in d or '日曜日' in d
+def actual_date_from_label(d, today):
+    m = re.match(r'(\d+)月(\d+)日', d)
+    if not m:
+        return None
+    month, day = int(m.group(1)), int(m.group(2))
+    year = today.year + (1 if month < today.month else 0)
+    return date(year, month, day)
+
+
+def date_meta(d, today):
+    actual = actual_date_from_label(d, today)
+    next_month = today.month + 1 if today.month < 12 else 1
+    next_year = today.year if today.month < 12 else today.year + 1
+
+    if actual is None:
+        return {
+            'key': d,
+            'month_group': 'other',
+            'day_group': 'weekday',
+            'is_holiday': False,
+            'holiday_name': '',
+        }
+
+    iso = actual.isoformat()
+    is_holiday = iso in JAPAN_HOLIDAYS
+    is_special = actual.weekday() >= 5 or is_holiday
+    if actual.year == today.year and actual.month == today.month:
+        month_group = 'current'
+    elif actual.year == next_year and actual.month == next_month:
+        month_group = 'next'
+    else:
+        month_group = 'other'
+
+    return {
+        'key': iso,
+        'month_group': month_group,
+        'day_group': 'special' if is_special else 'weekday',
+        'is_holiday': is_holiday,
+        'holiday_name': JAPAN_HOLIDAYS.get(iso, ''),
+    }
+
+
+def date_label(d, meta):
+    label = short_date(d)
+    if meta['is_holiday'] and '日)' not in label and '土)' not in label:
+        return f"{label}・祝"
+    return label
 
 
 def cell_class(val):
@@ -351,6 +416,7 @@ def write_rsv_html(all_data, output_path):
                       if has_real_data(ts)]
     fmt_slots = [format_time(ts) for ts in time_slots_raw]
     all_dates = sorted(all_dates_set, key=date_sort_key)
+    all_date_meta = {d: date_meta(d, today.date()) for d in all_dates}
     slots_json = '[' + ','.join(f'"{s}"' for s in fmt_slots) + ']'
 
     # ── サマリー: 全コートで最も良い状態を表示 ──
@@ -370,8 +436,14 @@ def write_rsv_html(all_data, output_path):
 
     sum_hdr = '<tr><th class="col-time">時間</th>'
     for d in all_dates:
-        cls = 'col-we' if is_weekend(d) else 'col-wd'
-        sum_hdr += f'<th class="{cls}">{short_date(d)}</th>'
+        meta = all_date_meta[d]
+        cls = 'col-special' if meta['day_group'] == 'special' else 'col-wd'
+        title = f' title="{meta["holiday_name"]}"' if meta['is_holiday'] else ''
+        sum_hdr += (
+            f'<th class="{cls}" data-date-key="{meta["key"]}" '
+            f'data-month-group="{meta["month_group"]}" data-day-group="{meta["day_group"]}"{title}>'
+            f'{date_label(d, meta)}</th>'
+        )
     sum_hdr += '</tr>'
 
     sum_body = ''
@@ -379,14 +451,18 @@ def write_rsv_html(all_data, output_path):
         ft = format_time(ts)
         sum_body += f'<tr class="row-time" data-time="{ft}"><td class="col-time">{ft}</td>'
         for d in all_dates:
+            meta = all_date_meta[d]
             entry = summary[d][ft]
             if entry is None:
                 val, cc = '-', 'unavailable'
             else:
                 _, val, cc = entry
-            we_cls = 'col-we' if is_weekend(d) else 'col-wd'
+            day_cls = 'col-special' if meta['day_group'] == 'special' else 'col-wd'
             disp = cell_display(val, cc)
-            sum_body += f'<td class="{we_cls} lv-{cc}" data-level="{cc}">{disp}</td>'
+            sum_body += (
+                f'<td class="{day_cls} lv-{cc}" data-level="{cc}" data-date-key="{meta["key"]}" '
+                f'data-month-group="{meta["month_group"]}" data-day-group="{meta["day_group"]}">{disp}</td>'
+            )
         sum_body += '</tr>'
 
     sum_html = (f'<div class="tbl-wrap"><table>'
@@ -401,8 +477,14 @@ def write_rsv_html(all_data, output_path):
         dates = sorted(sch.keys(), key=date_sort_key)
         hdr = '<tr><th class="col-time">時間</th>'
         for d in dates:
-            cls = 'col-we' if is_weekend(d) else 'col-wd'
-            hdr += f'<th class="{cls}">{short_date(d)}</th>'
+            meta = all_date_meta[d]
+            cls = 'col-special' if meta['day_group'] == 'special' else 'col-wd'
+            title = f' title="{meta["holiday_name"]}"' if meta['is_holiday'] else ''
+            hdr += (
+                f'<th class="{cls}" data-date-key="{meta["key"]}" '
+                f'data-month-group="{meta["month_group"]}" data-day-group="{meta["day_group"]}"{title}>'
+                f'{date_label(d, meta)}</th>'
+            )
         hdr += '</tr>'
 
         body = ''
@@ -410,11 +492,15 @@ def write_rsv_html(all_data, output_path):
             ft = format_time(ts)
             body += f'<tr class="row-time" data-time="{ft}"><td class="col-time">{ft}</td>'
             for d in dates:
+                meta = all_date_meta[d]
                 val = sch.get(d, {}).get(ts, '-')
                 cc = cell_class(val)
-                we_cls = 'col-we' if is_weekend(d) else 'col-wd'
+                day_cls = 'col-special' if meta['day_group'] == 'special' else 'col-wd'
                 disp = cell_display(val, cc)
-                body += f'<td class="{we_cls} lv-{cc}" data-level="{cc}">{disp}</td>'
+                body += (
+                    f'<td class="{day_cls} lv-{cc}" data-level="{cc}" data-date-key="{meta["key"]}" '
+                    f'data-month-group="{meta["month_group"]}" data-day-group="{meta["day_group"]}">{disp}</td>'
+                )
             body += '</tr>'
 
         fac_html += (f'<div class="facility">'
@@ -437,7 +523,8 @@ def write_rsv_html(all_data, output_path):
 
     date_html = ''
     for d in all_dates:
-        we_cls = 'we-date' if is_weekend(d) else ''
+        meta = all_date_meta[d]
+        day_cls = 'special-date' if meta['day_group'] == 'special' else ''
         hdr = '<tr><th class="col-time">時間</th>'
         for fn in short_names:
             hdr += f'<th class="col-fac">{fn}</th>'
@@ -454,10 +541,11 @@ def write_rsv_html(all_data, output_path):
                 body += f'<td class="lv-{cc}" data-level="{cc}">{disp}</td>'
             body += '</tr>'
 
-        data_we = '1' if is_weekend(d) else '0'
-        date_html += (f'<div class="facility {we_cls}" data-we="{data_we}">'
+        title = f' title="{meta["holiday_name"]}"' if meta['is_holiday'] else ''
+        date_html += (f'<div class="facility {day_cls}" data-date-key="{meta["key"]}" '
+                      f'data-month-group="{meta["month_group"]}" data-day-group="{meta["day_group"]}">'
                       f'<div class="fac-hd" onclick="toggleBody(this)">'
-                      f'{short_date(d)}<span class="arrow">▼</span></div>'
+                      f'<span{title}>{date_label(d, meta)}</span><span class="arrow">▼</span></div>'
                       f'<div class="fac-bd open"><div class="tbl-wrap"><table>'
                       f'<thead>{hdr}</thead><tbody>{body}</tbody>'
                       f'</table></div></div></div>\n')
@@ -515,12 +603,12 @@ body{{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
 .tbl-wrap{{overflow-x:auto;padding-bottom:4px}}
 table{{border-collapse:collapse;font-size:.82em;white-space:nowrap}}
 thead th{{padding:6px 9px;text-align:center;background:#141e30;border-bottom:2px solid var(--border);font-weight:600;position:sticky;top:0;z-index:10}}
-thead th.col-we{{background:#1a1232}}
+thead th.col-special{{background:#1a1232}}
 thead th.col-time{{position:sticky;left:0;z-index:20;background:#0f1829}}
 tbody tr:hover td{{filter:brightness(1.18)}}
 tbody td{{padding:5px 9px;text-align:center;border-top:1px solid #161f30}}
 tbody td.col-time{{background:#0f1829;font-weight:600;text-align:center;position:sticky;left:0;z-index:5;border-right:1px solid var(--border)}}
-tbody td.col-we{{background:var(--we-tint)}}
+tbody td.col-special{{background:var(--we-tint)}}
 td.lv-open{{background:var(--open-bg);color:var(--open-fg);font-weight:700}}
 td.lv-full{{background:var(--full-bg);color:var(--full-fg)}}
 td.lv-general{{background:var(--general-bg);color:var(--general-fg)}}
@@ -528,14 +616,7 @@ td.lv-rain{{background:var(--rain-bg);color:var(--rain-fg)}}
 td.lv-cancel{{background:var(--cancel-bg);color:var(--cancel-fg)}}
 td.lv-closed{{background:var(--closed-bg);color:var(--closed-fg)}}
 td.lv-unavailable,td.lv-other{{background:var(--na-bg);color:var(--na-fg)}}
-body.hide-wd .col-wd{{display:none}}
-body.hide-we .col-we{{display:none}}
-body.hide-we #view-date .facility[data-we="1"]{{display:none}}
-body.hide-wd #view-date .facility[data-we="0"]{{display:none}}
-body.dim-mode td[data-level]{{opacity:.07}}
-body.dim-mode td.col-time{{opacity:1!important}}
-body.dim-mode td.lv-show{{opacity:1}}
-.we-date>.fac-hd{{background:linear-gradient(90deg,#2d1f4e44,transparent)}}
+.special-date>.fac-hd{{background:linear-gradient(90deg,#2d1f4e44,transparent)}}
 @media(max-width:640px){{
   .site-header,.filters,.tabs,.main{{padding-left:10px;padding-right:10px}}
   table{{font-size:.74em}}tbody td{{padding:4px 5px}}
@@ -558,15 +639,19 @@ body.dim-mode td.lv-show{{opacity:1}}
   <div class="filters">
     <div class="fg">
       <span class="flabel">絞込み</span>
-      <button class="btn lv-open" data-lv="open" onclick="toggleLv(this)">○ 空き</button>
-      <button class="btn lv-full" data-lv="full" onclick="toggleLv(this)">× 予約あり</button>
-      <button class="btn lv-general" data-lv="general" onclick="toggleLv(this)">◎ 一般開放</button>
+      <button class="btn open-only" id="open-only-btn" onclick="toggleOpenOnly(this)">○ 空き</button>
+    </div>
+    <div class="fg">
+      <span class="flabel">月</span>
+      <button class="btn month on" data-month="all" onclick="setMonth(this)">全部</button>
+      <button class="btn month" data-month="current" onclick="setMonth(this)">本月</button>
+      <button class="btn month" data-month="next" onclick="setMonth(this)">下一月</button>
     </div>
     <div class="fg">
       <span class="flabel">曜日</span>
       <button class="btn day on" data-day="all" onclick="setDay(this)">全部</button>
-      <button class="btn day" data-day="wd" onclick="setDay(this)">平日</button>
-      <button class="btn day" data-day="we" onclick="setDay(this)">週末</button>
+      <button class="btn day" data-day="weekday" onclick="setDay(this)">平日</button>
+      <button class="btn day" data-day="special" onclick="setDay(this)">周末+休日</button>
     </div>
     <div class="fg" id="time-fg">
       <span class="flabel">時間</span>
@@ -592,8 +677,10 @@ body.dim-mode td.lv-show{{opacity:1}}
 
 <script>
 const SLOTS = {slots_json};
-const activeLvs = new Set();
 let activeTimes = new Set(SLOTS);
+let openOnly = false;
+let monthFilter = 'all';
+let dayFilter = 'all';
 let allExpanded = true;
 let currentView = 'summary';
 
@@ -606,40 +693,136 @@ SLOTS.forEach(t => {{
   b.onclick = () => {{
     b.classList.toggle('on');
     if (activeTimes.has(t)) activeTimes.delete(t); else activeTimes.add(t);
-    applyTime();
+    applyFilters();
   }};
   tfg.appendChild(b);
 }});
 
-function applyTime() {{
-  document.querySelectorAll('.row-time').forEach(tr => {{
-    tr.style.display = activeTimes.has(tr.dataset.time) ? '' : 'none';
+document.querySelectorAll('td[data-level]').forEach(td => {{
+  td.dataset.rawText = td.textContent;
+}});
+
+function matchesDateFilters(el) {{
+  if (monthFilter !== 'all' && el.dataset.monthGroup !== monthFilter) return false;
+  if (dayFilter !== 'all' && el.dataset.dayGroup !== dayFilter) return false;
+  return true;
+}}
+
+function applyTableFilters(table) {{
+  if (!table) return false;
+
+  const headers = Array.from(table.querySelectorAll('thead th[data-date-key]'));
+  const rows = Array.from(table.querySelectorAll('tbody tr.row-time'));
+  const visibleCols = {{}};
+
+  headers.forEach(th => {{
+    const key = th.dataset.dateKey;
+    const dateOk = matchesDateFilters(th);
+    if (!dateOk) {{
+      visibleCols[key] = false;
+      return;
+    }}
+    if (!openOnly) {{
+      visibleCols[key] = true;
+      return;
+    }}
+    visibleCols[key] = rows.some(tr =>
+      activeTimes.has(tr.dataset.time) &&
+      Array.from(tr.querySelectorAll(`td[data-date-key="${{key}}"]`)).some(td => td.dataset.level === 'open')
+    );
+  }});
+
+  headers.forEach(th => {{
+    th.style.display = visibleCols[th.dataset.dateKey] ? '' : 'none';
+  }});
+
+  let tableHasVisibleRow = false;
+  rows.forEach(tr => {{
+    const timeOk = activeTimes.has(tr.dataset.time);
+    let rowHasVisibleCell = false;
+
+    tr.querySelectorAll('td[data-date-key]').forEach(td => {{
+      const colVisible = !!visibleCols[td.dataset.dateKey];
+      const showText = !openOnly || td.dataset.level === 'open';
+      td.style.display = colVisible ? '' : 'none';
+      td.textContent = showText ? td.dataset.rawText : '';
+      if (colVisible && showText) rowHasVisibleCell = true;
+    }});
+
+    tr.style.display = timeOk && rowHasVisibleCell ? '' : 'none';
+    if (tr.style.display !== 'none') tableHasVisibleRow = true;
+  }});
+
+  return tableHasVisibleRow;
+}}
+
+function applyDateCards() {{
+  document.querySelectorAll('#view-date .facility').forEach(card => {{
+    const dateOk = matchesDateFilters(card);
+    if (!dateOk) {{
+      card.style.display = 'none';
+      return;
+    }}
+
+    const table = card.querySelector('table');
+    const facHeaders = Array.from(table.querySelectorAll('thead th.col-fac'));
+    const rows = Array.from(card.querySelectorAll('tbody tr.row-time'));
+    const visibleCols = facHeaders.map((_, idx) =>
+      rows.some(tr => activeTimes.has(tr.dataset.time) && tr.querySelectorAll('td[data-level]')[idx]?.dataset.level === 'open')
+    );
+
+    facHeaders.forEach((th, idx) => {{
+      th.style.display = !openOnly || visibleCols[idx] ? '' : 'none';
+    }});
+
+    let cardHasVisibleRow = false;
+    rows.forEach(tr => {{
+      const timeOk = activeTimes.has(tr.dataset.time);
+      let rowHasVisibleCell = false;
+      tr.querySelectorAll('td[data-level]').forEach((td, idx) => {{
+        const colVisible = !openOnly || visibleCols[idx];
+        const showText = !openOnly || td.dataset.level === 'open';
+        td.style.display = colVisible ? '' : 'none';
+        td.textContent = showText ? td.dataset.rawText : '';
+        if (colVisible && showText) rowHasVisibleCell = true;
+      }});
+      tr.style.display = timeOk && rowHasVisibleCell ? '' : 'none';
+      if (tr.style.display !== 'none') cardHasVisibleRow = true;
+    }});
+
+    card.style.display = cardHasVisibleRow ? '' : 'none';
   }});
 }}
-function toggleLv(btn) {{
-  btn.classList.toggle('on');
-  const lv = btn.dataset.lv;
-  if (activeLvs.has(lv)) activeLvs.delete(lv); else activeLvs.add(lv);
-  applyLv();
+
+function applyFilters() {{
+  applyTableFilters(document.querySelector('#view-summary table'));
+
+  document.querySelectorAll('#view-facility .facility').forEach(card => {{
+    const visible = applyTableFilters(card.querySelector('table'));
+    card.style.display = visible ? '' : 'none';
+  }});
+
+  applyDateCards();
 }}
-function applyLv() {{
-  if (activeLvs.size === 0) {{
-    document.body.classList.remove('dim-mode');
-    document.querySelectorAll('td.lv-show').forEach(td => td.classList.remove('lv-show'));
-  }} else {{
-    document.body.classList.add('dim-mode');
-    document.querySelectorAll('td[data-level]').forEach(td => {{
-      td.classList.toggle('lv-show', activeLvs.has(td.dataset.level));
-    }});
-  }}
+
+function toggleOpenOnly(btn) {{
+  openOnly = !openOnly;
+  btn.classList.toggle('on', openOnly);
+  applyFilters();
 }}
+
+function setMonth(btn) {{
+  document.querySelectorAll('.btn.month').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  monthFilter = btn.dataset.month;
+  applyFilters();
+}}
+
 function setDay(btn) {{
   document.querySelectorAll('.btn.day').forEach(b => b.classList.remove('on'));
   btn.classList.add('on');
-  document.body.classList.remove('hide-wd','hide-we');
-  const d = btn.dataset.day;
-  if (d === 'wd') document.body.classList.add('hide-we');
-  if (d === 'we') document.body.classList.add('hide-wd');
+  dayFilter = btn.dataset.day;
+  applyFilters();
 }}
 function setView(view, btn) {{
   document.querySelectorAll('.tab').forEach(b => b.classList.remove('on'));
@@ -667,16 +850,20 @@ function toggleAll() {{
   }});
 }}
 function resetAll() {{
-  activeLvs.clear();
+  openOnly = false;
+  monthFilter = 'all';
+  dayFilter = 'all';
   activeTimes = new Set(SLOTS);
-  document.querySelectorAll('.btn[data-lv]').forEach(b => b.classList.remove('on'));
+  document.getElementById('open-only-btn').classList.remove('on');
+  document.querySelectorAll('.btn.month').forEach(b => b.classList.remove('on'));
+  document.querySelector('.btn.month[data-month="all"]').classList.add('on');
   document.querySelectorAll('.btn.time-btn').forEach(b => b.classList.add('on'));
   document.querySelectorAll('.btn.day').forEach(b => b.classList.remove('on'));
   document.querySelector('.btn.day[data-day="all"]').classList.add('on');
-  document.body.classList.remove('dim-mode','hide-wd','hide-we');
-  document.querySelectorAll('td.lv-show').forEach(td => td.classList.remove('lv-show'));
-  document.querySelectorAll('.row-time').forEach(tr => tr.style.display = '');
+  applyFilters();
 }}
+
+applyFilters();
 </script>
 </body>
 </html>'''
