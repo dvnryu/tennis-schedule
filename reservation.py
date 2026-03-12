@@ -41,9 +41,9 @@ load_env()
 BASE_URL = "https://www.fureai-net.city.kawasaki.jp/web"
 TARGET_FACILITY = '富士見テニスコート'
 JST = timezone(timedelta(hours=9), name="JST")
-INITIAL_PAGE_SLEEP_SECONDS = float(os.environ.get('TENNIS_INITIAL_PAGE_SLEEP_SECONDS', '0.5'))
-NEXT_WEEK_SLEEP_SECONDS = float(os.environ.get('TENNIS_NEXT_WEEK_SLEEP_SECONDS', '0.4'))
-FETCH_WORKERS = max(1, int(os.environ.get('TENNIS_FETCH_WORKERS', '1')))
+INITIAL_PAGE_SLEEP_SECONDS = float(os.environ.get('TENNIS_INITIAL_PAGE_SLEEP_SECONDS', '0.1'))
+NEXT_WEEK_SLEEP_SECONDS = float(os.environ.get('TENNIS_NEXT_WEEK_SLEEP_SECONDS', '0.1'))
+FETCH_WORKERS = max(1, int(os.environ.get('TENNIS_FETCH_WORKERS', '3')))
 
 REQUEST_STATS = defaultdict(list)
 STAGE_STATS = defaultdict(list)
