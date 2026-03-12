@@ -1,0 +1,61 @@
+name: Update Tennis Data
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: tennis-data-page
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+env:
+  TZ: Asia/Tokyo
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: page
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Fetch lottery data during application window
+        env:
+          FUREAI_USER_ID: ${{ secrets.FUREAI_USER_ID }}
+          FUREAI_PASSWORD: ${{ secrets.FUREAI_PASSWORD }}
+        run: |
+          JST_DAY=$(date +%-d)
+          echo "Japan day-of-month: ${JST_DAY}"
+          if [ "$JST_DAY" -ge 1 ] && [ "$JST_DAY" -le 8 ]; then
+            python lottery.py
+          else
+            echo "Skipping lottery.py outside the 1-8 JST lottery window"
+          fi
+
+      - name: Fetch reservation vacancy data
+        run: python reservation.py
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/index.html docs/app.html docs/app.css docs/app.js docs/lot.html docs/rsv.html docs/rsv.json docs/lottery.json
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          git commit -m "update tennis data $(date +%Y-%m-%d)"
+          git pull --rebase origin page
+          git push origin page
