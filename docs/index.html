@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>富士見テニスコート 空き状況</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  background:#0a0f1e;color:#e2e8f0;
+  min-height:100vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;padding:24px;
+}
+.title{
+  font-size:1.5em;font-weight:700;margin-bottom:6px;text-align:center;
+  background:linear-gradient(135deg,#22d3ee,#a78bfa);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.subtitle{font-size:.85em;color:#64748b;margin-bottom:48px;text-align:center}
+.cards{display:flex;gap:20px;flex-wrap:wrap;justify-content:center}
+.card{
+  display:block;width:260px;padding:32px 24px;
+  background:#111827;border:1px solid #1e293b;border-radius:16px;
+  text-decoration:none;color:#e2e8f0;
+  transition:transform .15s,border-color .15s,box-shadow .15s;
+  text-align:center;
+}
+.card:hover{
+  transform:translateY(-4px);
+  border-color:#334155;
+  box-shadow:0 12px 40px rgba(0,0,0,.4);
+}
+.card-icon{font-size:3em;margin-bottom:16px}
+.card-name{font-size:1.2em;font-weight:700;margin-bottom:8px}
+.card-desc{font-size:.8em;color:#64748b;line-height:1.6}
+.card-badge{
+  display:inline-block;margin-top:16px;
+  padding:4px 14px;border-radius:20px;font-size:.75em;font-weight:600;
+}
+.lot .card-badge{background:#0c2340;color:#7dd3fc;border:1px solid #0284c7}
+.rsv .card-badge{background:#064e3b;color:#6ee7b7;border:1px solid #059669}
+.footer{margin-top:48px;font-size:.72em;color:#334155;text-align:center}
+@media(max-width:600px){.card{width:100%;max-width:320px}}
+</style>
+</head>
+<body>
+<div class="title">富士見テニスコート</div>
+<div class="subtitle">空き状況チェック</div>
+<div class="cards">
+  <a href="lot.html" class="card lot">
+    <div class="card-icon">🎰</div>
+    <div class="card-name">抽選</div>
+    <div class="card-desc">毎月1〜8日に受付。<br>共通ビューで抽選申込状況を確認。</div>
+    <div class="card-badge">当月 抽選枠</div>
+  </a>
+  <a href="rsv.html" class="card rsv">
+    <div class="card-icon">📅</div>
+    <div class="card-name">予約</div>
+    <div class="card-desc">先着順で予約可能。<br>共通ビューで今月・来月の空き状況を確認。</div>
+    <div class="card-badge">今月・来月 予約枠</div>
+  </a>
+</div>
+<div class="footer">川崎市 富士見テニスコート（富士見テニス場1〜12）</div>
+</body>
+</html>
