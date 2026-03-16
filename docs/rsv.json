@@ -1,7 +1,7 @@
 {
   "version": 1,
   "mode": "reservation",
-  "generated_at": "2026-03-16T20:10+09:00",
+  "generated_at": "2026-03-16T20:56+09:00",
   "timezone": "Asia/Tokyo",
   "page": {
     "title": "富士見テニスコート 予約空き状況",
@@ -9708,9 +9708,9 @@
           "raw": "予約あり"
         },
         "1500": {
-          "status": "open",
-          "text": "○空き",
-          "raw": "空き"
+          "status": "full",
+          "text": "×予約",
+          "raw": "予約あり"
         },
         "1700": {
           "status": "open",
@@ -11278,14 +11278,14 @@
           "raw": "予約あり"
         },
         "1500": {
-          "status": "open",
-          "text": "○空き",
-          "raw": "空き"
+          "status": "full",
+          "text": "×予約",
+          "raw": "予約あり"
         },
         "1700": {
-          "status": "open",
-          "text": "○空き",
-          "raw": "空き"
+          "status": "full",
+          "text": "×予約",
+          "raw": "予約あり"
         },
         "1830": {
           "status": "full",
@@ -13766,9 +13766,9 @@
           "raw": "予約あり"
         },
         "1100": {
-          "status": "full",
-          "text": "×予約",
-          "raw": "予約あり"
+          "status": "open",
+          "text": "○空き",
+          "raw": "空き"
         },
         "1300": {
           "status": "full",
