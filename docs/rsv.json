@@ -1,7 +1,7 @@
 {
   "version": 1,
   "mode": "reservation",
-  "generated_at": "2026-03-22T07:48+09:00",
+  "generated_at": "2026-03-22T10:50+09:00",
   "timezone": "Asia/Tokyo",
   "page": {
     "title": "富士見テニスコート 予約空き状況",
@@ -2144,9 +2144,9 @@
           "raw": "予約あり"
         },
         "1500": {
-          "status": "full",
-          "text": "×予約",
-          "raw": "予約あり"
+          "status": "open",
+          "text": "○空き",
+          "raw": "空き"
         },
         "1700": {
           "status": "open",
@@ -8618,9 +8618,9 @@
           "raw": "空き"
         },
         "1500": {
-          "status": "full",
-          "text": "×予約",
-          "raw": "予約あり"
+          "status": "open",
+          "text": "○空き",
+          "raw": "空き"
         },
         "1700": {
           "status": "open",
@@ -8650,9 +8650,9 @@
           "raw": "予約あり"
         },
         "1500": {
-          "status": "full",
-          "text": "×予約",
-          "raw": "予約あり"
+          "status": "open",
+          "text": "○空き",
+          "raw": "空き"
         },
         "1700": {
           "status": "full",
@@ -9676,9 +9676,9 @@
           "raw": "予約あり"
         },
         "1500": {
-          "status": "full",
-          "text": "×予約",
-          "raw": "予約あり"
+          "status": "open",
+          "text": "○空き",
+          "raw": "空き"
         },
         "1700": {
           "status": "open",
@@ -10862,9 +10862,9 @@
           "raw": "予約あり"
         },
         "1500": {
-          "status": "open",
-          "text": "○空き",
-          "raw": "空き"
+          "status": "full",
+          "text": "×予約",
+          "raw": "予約あり"
         },
         "1700": {
           "status": "open",
@@ -12144,9 +12144,9 @@
           "raw": "空き"
         },
         "1500": {
-          "status": "open",
-          "text": "○空き",
-          "raw": "空き"
+          "status": "full",
+          "text": "×予約",
+          "raw": "予約あり"
         },
         "1700": {
           "status": "open",
@@ -13436,9 +13436,9 @@
           "raw": "予約あり"
         },
         "1830": {
-          "status": "open",
-          "text": "○空き",
-          "raw": "空き"
+          "status": "full",
+          "text": "×予約",
+          "raw": "予約あり"
         }
       },
       "2026-03-24": {
@@ -14713,9 +14713,9 @@
           "raw": "予約あり"
         },
         "1700": {
-          "status": "open",
-          "text": "○空き",
-          "raw": "空き"
+          "status": "full",
+          "text": "×予約",
+          "raw": "予約あり"
         },
         "1830": {
           "status": "full",
