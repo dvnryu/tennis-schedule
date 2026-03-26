@@ -1,7 +1,7 @@
 {
   "version": 1,
   "mode": "reservation",
-  "generated_at": "2026-03-26T09:00+09:00",
+  "generated_at": "2026-03-26T12:26+09:00",
   "timezone": "Asia/Tokyo",
   "page": {
     "title": "富士見テニスコート 予約空き状況",
@@ -520,14 +520,14 @@
           "raw": "空き"
         },
         "1100": {
-          "status": "full",
-          "text": "×予約",
-          "raw": "予約あり"
+          "status": "open",
+          "text": "○空き",
+          "raw": "空き"
         },
         "1300": {
-          "status": "full",
-          "text": "×予約",
-          "raw": "予約あり"
+          "status": "open",
+          "text": "○空き",
+          "raw": "空き"
         },
         "1500": {
           "status": "full",
@@ -887,9 +887,9 @@
           "raw": "予約あり"
         },
         "1700": {
-          "status": "open",
-          "text": "○空き",
-          "raw": "空き"
+          "status": "full",
+          "text": "×予約",
+          "raw": "予約あり"
         },
         "1830": {
           "status": "full",
@@ -1175,9 +1175,9 @@
           "raw": "予約あり"
         },
         "1700": {
-          "status": "open",
-          "text": "○空き",
-          "raw": "空き"
+          "status": "full",
+          "text": "×予約",
+          "raw": "予約あり"
         },
         "1830": {
           "status": "full",
@@ -2041,9 +2041,9 @@
           "raw": "空き"
         },
         "1700": {
-          "status": "open",
-          "text": "○空き",
-          "raw": "空き"
+          "status": "full",
+          "text": "×予約",
+          "raw": "予約あり"
         },
         "1830": {
           "status": "full",
@@ -2329,9 +2329,9 @@
           "raw": "空き"
         },
         "1700": {
-          "status": "open",
-          "text": "○空き",
-          "raw": "空き"
+          "status": "full",
+          "text": "×予約",
+          "raw": "予約あり"
         },
         "1830": {
           "status": "full",
@@ -2393,9 +2393,9 @@
           "raw": "空き"
         },
         "1700": {
-          "status": "open",
-          "text": "○空き",
-          "raw": "空き"
+          "status": "full",
+          "text": "×予約",
+          "raw": "予約あり"
         },
         "1830": {
           "status": "full",
@@ -2506,9 +2506,9 @@
           "raw": "予約あり"
         },
         "1100": {
-          "status": "full",
-          "text": "×予約",
-          "raw": "予約あり"
+          "status": "open",
+          "text": "○空き",
+          "raw": "空き"
         },
         "1300": {
           "status": "open",
@@ -2828,14 +2828,14 @@
           "raw": "空き"
         },
         "1100": {
-          "status": "full",
-          "text": "×予約",
-          "raw": "予約あり"
+          "status": "open",
+          "text": "○空き",
+          "raw": "空き"
         },
         "1300": {
-          "status": "full",
-          "text": "×予約",
-          "raw": "予約あり"
+          "status": "open",
+          "text": "○空き",
+          "raw": "空き"
         },
         "1500": {
           "status": "full",
@@ -2966,9 +2966,9 @@
           "raw": "予約あり"
         },
         "1500": {
-          "status": "full",
-          "text": "×予約",
-          "raw": "予約あり"
+          "status": "open",
+          "text": "○空き",
+          "raw": "空き"
         },
         "1700": {
           "status": "open",
@@ -3547,9 +3547,9 @@
           "raw": "空き"
         },
         "1700": {
-          "status": "open",
-          "text": "○空き",
-          "raw": "空き"
+          "status": "full",
+          "text": "×予約",
+          "raw": "予約あり"
         },
         "1830": {
           "status": "full",
@@ -3982,9 +3982,9 @@
           "raw": "空き"
         },
         "1100": {
-          "status": "full",
-          "text": "×予約",
-          "raw": "予約あり"
+          "status": "open",
+          "text": "○空き",
+          "raw": "空き"
         },
         "1300": {
           "status": "open",
@@ -4413,9 +4413,9 @@
           "raw": "空き"
         },
         "1700": {
-          "status": "open",
-          "text": "○空き",
-          "raw": "空き"
+          "status": "full",
+          "text": "×予約",
+          "raw": "予約あり"
         },
         "1830": {
           "status": "full",
@@ -4777,9 +4777,9 @@
       },
       "2026-04-20": {
         "0900": {
-          "status": "full",
-          "text": "×予約",
-          "raw": "予約あり"
+          "status": "open",
+          "text": "○空き",
+          "raw": "空き"
         },
         "1100": {
           "status": "full",
@@ -5136,9 +5136,9 @@
           "raw": "空き"
         },
         "1100": {
-          "status": "full",
-          "text": "×予約",
-          "raw": "予約あり"
+          "status": "open",
+          "text": "○空き",
+          "raw": "空き"
         },
         "1300": {
           "status": "open",
@@ -5567,9 +5567,9 @@
           "raw": "予約あり"
         },
         "1700": {
-          "status": "open",
-          "text": "○空き",
-          "raw": "空き"
+          "status": "full",
+          "text": "×予約",
+          "raw": "予約あり"
         },
         "1830": {
           "status": "full",
@@ -6290,9 +6290,9 @@
           "raw": "空き"
         },
         "1100": {
-          "status": "full",
-          "text": "×予約",
-          "raw": "予約あり"
+          "status": "open",
+          "text": "○空き",
+          "raw": "空き"
         },
         "1300": {
           "status": "full",
@@ -6487,9 +6487,9 @@
           "raw": "予約あり"
         },
         "1300": {
-          "status": "open",
-          "text": "○空き",
-          "raw": "空き"
+          "status": "full",
+          "text": "×予約",
+          "raw": "予約あり"
         },
         "1500": {
           "status": "open",
@@ -7122,9 +7122,9 @@
           "raw": "予約あり"
         },
         "1100": {
-          "status": "open",
-          "text": "○空き",
-          "raw": "空き"
+          "status": "full",
+          "text": "×予約",
+          "raw": "予約あり"
         },
         "1300": {
           "status": "full",
@@ -7444,14 +7444,14 @@
           "raw": "空き"
         },
         "1100": {
-          "status": "full",
-          "text": "×予約",
-          "raw": "予約あり"
+          "status": "open",
+          "text": "○空き",
+          "raw": "空き"
         },
         "1300": {
-          "status": "full",
-          "text": "×予約",
-          "raw": "予約あり"
+          "status": "open",
+          "text": "○空き",
+          "raw": "空き"
         },
         "1500": {
           "status": "full",
@@ -7567,9 +7567,9 @@
       },
       "2026-03-30": {
         "0900": {
-          "status": "open",
-          "text": "○空き",
-          "raw": "空き"
+          "status": "full",
+          "text": "×予約",
+          "raw": "予約あり"
         },
         "1100": {
           "status": "full",
@@ -8303,9 +8303,9 @@
       },
       "2026-04-22": {
         "0900": {
-          "status": "open",
-          "text": "○空き",
-          "raw": "空き"
+          "status": "full",
+          "text": "×予約",
+          "raw": "予約あり"
         },
         "1100": {
           "status": "full",
@@ -8598,9 +8598,9 @@
           "raw": "空き"
         },
         "1100": {
-          "status": "full",
-          "text": "×予約",
-          "raw": "予約あり"
+          "status": "open",
+          "text": "○空き",
+          "raw": "空き"
         },
         "1300": {
           "status": "open",
@@ -8992,9 +8992,9 @@
           "raw": "予約あり"
         },
         "1500": {
-          "status": "open",
-          "text": "○空き",
-          "raw": "空き"
+          "status": "full",
+          "text": "×予約",
+          "raw": "予約あり"
         },
         "1700": {
           "status": "open",
@@ -9093,9 +9093,9 @@
           "raw": "予約あり"
         },
         "1700": {
-          "status": "open",
-          "text": "○空き",
-          "raw": "空き"
+          "status": "full",
+          "text": "×予約",
+          "raw": "予約あり"
         },
         "1830": {
           "status": "full",
@@ -9477,9 +9477,9 @@
           "raw": "予約あり"
         },
         "1700": {
-          "status": "open",
-          "text": "○空き",
-          "raw": "空き"
+          "status": "full",
+          "text": "×予約",
+          "raw": "予約あり"
         },
         "1830": {
           "status": "full",
@@ -9541,9 +9541,9 @@
           "raw": "予約あり"
         },
         "1700": {
-          "status": "open",
-          "text": "○空き",
-          "raw": "空き"
+          "status": "full",
+          "text": "×予約",
+          "raw": "予約あり"
         },
         "1830": {
           "status": "full",
@@ -9752,14 +9752,14 @@
           "raw": "空き"
         },
         "1100": {
-          "status": "full",
-          "text": "×予約",
-          "raw": "予約あり"
+          "status": "open",
+          "text": "○空き",
+          "raw": "空き"
         },
         "1300": {
-          "status": "full",
-          "text": "×予約",
-          "raw": "予約あり"
+          "status": "open",
+          "text": "○空き",
+          "raw": "空き"
         },
         "1500": {
           "status": "full",
@@ -10247,9 +10247,9 @@
           "raw": "空き"
         },
         "1700": {
-          "status": "open",
-          "text": "○空き",
-          "raw": "空き"
+          "status": "full",
+          "text": "×予約",
+          "raw": "予約あり"
         },
         "1830": {
           "status": "full",
@@ -10419,9 +10419,9 @@
       },
       "2026-04-16": {
         "0900": {
-          "status": "full",
-          "text": "×予約",
-          "raw": "予約あり"
+          "status": "open",
+          "text": "○空き",
+          "raw": "空き"
         },
         "1100": {
           "status": "full",
@@ -10631,9 +10631,9 @@
           "raw": "空き"
         },
         "1700": {
-          "status": "open",
-          "text": "○空き",
-          "raw": "空き"
+          "status": "full",
+          "text": "×予約",
+          "raw": "予約あり"
         },
         "1830": {
           "status": "full",
@@ -10695,9 +10695,9 @@
           "raw": "予約あり"
         },
         "1700": {
-          "status": "open",
-          "text": "○空き",
-          "raw": "空き"
+          "status": "full",
+          "text": "×予約",
+          "raw": "予約あり"
         },
         "1830": {
           "status": "full",
@@ -10906,14 +10906,14 @@
           "raw": "空き"
         },
         "1100": {
-          "status": "full",
-          "text": "×予約",
-          "raw": "予約あり"
+          "status": "open",
+          "text": "○空き",
+          "raw": "空き"
         },
         "1300": {
-          "status": "full",
-          "text": "×予約",
-          "raw": "予約あり"
+          "status": "open",
+          "text": "○空き",
+          "raw": "空き"
         },
         "1500": {
           "status": "full",
@@ -11573,9 +11573,9 @@
       },
       "2026-04-16": {
         "0900": {
-          "status": "open",
-          "text": "○空き",
-          "raw": "空き"
+          "status": "full",
+          "text": "×予約",
+          "raw": "予約あり"
         },
         "1100": {
           "status": "full",
@@ -12060,9 +12060,9 @@
           "raw": "空き"
         },
         "1100": {
-          "status": "full",
-          "text": "×予約",
-          "raw": "予約あり"
+          "status": "open",
+          "text": "○空き",
+          "raw": "空き"
         },
         "1300": {
           "status": "full",
@@ -12454,9 +12454,9 @@
           "raw": "予約あり"
         },
         "1500": {
-          "status": "full",
-          "text": "×予約",
-          "raw": "予約あり"
+          "status": "open",
+          "text": "○空き",
+          "raw": "空き"
         },
         "1700": {
           "status": "open",
@@ -12855,9 +12855,9 @@
       },
       "2026-04-20": {
         "0900": {
-          "status": "open",
-          "text": "○空き",
-          "raw": "空き"
+          "status": "full",
+          "text": "×予約",
+          "raw": "予約あり"
         },
         "1100": {
           "status": "full",
@@ -12902,9 +12902,9 @@
           "raw": "予約あり"
         },
         "1500": {
-          "status": "full",
-          "text": "×予約",
-          "raw": "予約あり"
+          "status": "open",
+          "text": "○空き",
+          "raw": "空き"
         },
         "1700": {
           "status": "open",
@@ -13079,9 +13079,9 @@
       },
       "2026-04-27": {
         "0900": {
-          "status": "full",
-          "text": "×予約",
-          "raw": "予約あり"
+          "status": "open",
+          "text": "○空き",
+          "raw": "空き"
         },
         "1100": {
           "status": "full",
@@ -14056,9 +14056,9 @@
           "raw": "予約あり"
         },
         "1500": {
-          "status": "open",
-          "text": "○空き",
-          "raw": "空き"
+          "status": "full",
+          "text": "×予約",
+          "raw": "予約あり"
         },
         "1700": {
           "status": "open",
