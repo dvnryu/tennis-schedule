@@ -1,7 +1,7 @@
 {
   "version": 1,
   "mode": "lottery",
-  "generated_at": "2026-04-01T07:21+09:00",
+  "generated_at": "2026-04-01T07:58+09:00",
   "timezone": "Asia/Tokyo",
   "page": {
     "title": "富士見テニスコート 抽選申込状況",
@@ -470,9 +470,9 @@
           "raw": "1/0"
         },
         "1100": {
-          "status": "easy",
-          "text": "1/2",
-          "raw": "1/2"
+          "status": "medium",
+          "text": "1/4",
+          "raw": "1/4"
         },
         "1300": {
           "status": "hot",
@@ -503,8 +503,8 @@
         },
         "1100": {
           "status": "easy",
-          "text": "1/1",
-          "raw": "1/1"
+          "text": "1/2",
+          "raw": "1/2"
         },
         "1300": {
           "status": "hot",
@@ -535,8 +535,8 @@
         },
         "1100": {
           "status": "easy",
-          "text": "1/1",
-          "raw": "1/1"
+          "text": "1/2",
+          "raw": "1/2"
         },
         "1300": {
           "status": "hot",
@@ -567,8 +567,8 @@
         },
         "1100": {
           "status": "easy",
-          "text": "1/1",
-          "raw": "1/1"
+          "text": "1/2",
+          "raw": "1/2"
         },
         "1300": {
           "status": "hot",
@@ -599,8 +599,8 @@
         },
         "1100": {
           "status": "easy",
-          "text": "1/1",
-          "raw": "1/1"
+          "text": "1/2",
+          "raw": "1/2"
         },
         "1300": {
           "status": "hot",
@@ -630,9 +630,9 @@
           "raw": "1/0"
         },
         "1100": {
-          "status": "hot",
-          "text": "★1/0",
-          "raw": "1/0"
+          "status": "easy",
+          "text": "1/2",
+          "raw": "1/2"
         },
         "1300": {
           "status": "hot",
@@ -662,9 +662,9 @@
           "raw": "1/0"
         },
         "1100": {
-          "status": "easy",
-          "text": "1/1",
-          "raw": "1/1"
+          "status": "medium",
+          "text": "1/4",
+          "raw": "1/4"
         },
         "1300": {
           "status": "hot",
@@ -694,9 +694,9 @@
           "raw": "1/0"
         },
         "1100": {
-          "status": "easy",
-          "text": "1/1",
-          "raw": "1/1"
+          "status": "medium",
+          "text": "1/4",
+          "raw": "1/4"
         },
         "1300": {
           "status": "hot",
@@ -758,9 +758,9 @@
           "raw": "1/0"
         },
         "1100": {
-          "status": "hot",
-          "text": "★1/0",
-          "raw": "1/0"
+          "status": "easy",
+          "text": "1/1",
+          "raw": "1/1"
         },
         "1300": {
           "status": "hot",
@@ -822,9 +822,9 @@
           "raw": "1/0"
         },
         "1100": {
-          "status": "easy",
-          "text": "1/1",
-          "raw": "1/1"
+          "status": "medium",
+          "text": "1/4",
+          "raw": "1/4"
         },
         "1300": {
           "status": "hot",
@@ -850,13 +850,13 @@
       "2026-05-13": {
         "0900": {
           "status": "hard",
-          "text": "1/13",
-          "raw": "1/13"
+          "text": "1/66",
+          "raw": "1/66"
         },
         "1100": {
-          "status": "easy",
-          "text": "1/1",
-          "raw": "1/1"
+          "status": "medium",
+          "text": "1/4",
+          "raw": "1/4"
         },
         "1300": {
           "status": "hot",
@@ -886,9 +886,9 @@
           "raw": "1/0"
         },
         "1100": {
-          "status": "easy",
-          "text": "1/1",
-          "raw": "1/1"
+          "status": "medium",
+          "text": "1/4",
+          "raw": "1/4"
         },
         "1300": {
           "status": "hot",
@@ -918,9 +918,9 @@
           "raw": "1/0"
         },
         "1100": {
-          "status": "easy",
-          "text": "1/1",
-          "raw": "1/1"
+          "status": "medium",
+          "text": "1/4",
+          "raw": "1/4"
         },
         "1300": {
           "status": "hot",
@@ -1014,9 +1014,9 @@
           "raw": "1/0"
         },
         "1100": {
-          "status": "easy",
-          "text": "1/1",
-          "raw": "1/1"
+          "status": "medium",
+          "text": "1/4",
+          "raw": "1/4"
         },
         "1300": {
           "status": "hot",
@@ -1046,9 +1046,9 @@
           "raw": "1/0"
         },
         "1100": {
-          "status": "easy",
-          "text": "1/1",
-          "raw": "1/1"
+          "status": "medium",
+          "text": "1/4",
+          "raw": "1/4"
         },
         "1300": {
           "status": "hot",
@@ -1078,9 +1078,9 @@
           "raw": "1/0"
         },
         "1100": {
-          "status": "easy",
-          "text": "1/1",
-          "raw": "1/1"
+          "status": "medium",
+          "text": "1/4",
+          "raw": "1/4"
         },
         "1300": {
           "status": "hot",
@@ -1110,9 +1110,9 @@
           "raw": "1/0"
         },
         "1100": {
-          "status": "easy",
-          "text": "1/1",
-          "raw": "1/1"
+          "status": "medium",
+          "text": "1/4",
+          "raw": "1/4"
         },
         "1300": {
           "status": "hot",
@@ -1142,9 +1142,9 @@
           "raw": "1/0"
         },
         "1100": {
-          "status": "easy",
-          "text": "1/1",
-          "raw": "1/1"
+          "status": "medium",
+          "text": "1/4",
+          "raw": "1/4"
         },
         "1300": {
           "status": "hot",
@@ -1206,9 +1206,9 @@
           "raw": "1/0"
         },
         "1100": {
-          "status": "hot",
-          "text": "★1/0",
-          "raw": "1/0"
+          "status": "easy",
+          "text": "1/1",
+          "raw": "1/1"
         },
         "1300": {
           "status": "hot",
@@ -1238,9 +1238,9 @@
           "raw": "1/0"
         },
         "1100": {
-          "status": "easy",
-          "text": "1/1",
-          "raw": "1/1"
+          "status": "medium",
+          "text": "1/4",
+          "raw": "1/4"
         },
         "1300": {
           "status": "hot",
@@ -1302,9 +1302,9 @@
           "raw": "1/0"
         },
         "1100": {
-          "status": "easy",
-          "text": "1/1",
-          "raw": "1/1"
+          "status": "medium",
+          "text": "1/4",
+          "raw": "1/4"
         },
         "1300": {
           "status": "hot",
@@ -1334,9 +1334,9 @@
           "raw": "1/0"
         },
         "1100": {
-          "status": "easy",
-          "text": "1/1",
-          "raw": "1/1"
+          "status": "medium",
+          "text": "1/4",
+          "raw": "1/4"
         },
         "1300": {
           "status": "hot",
@@ -1366,9 +1366,9 @@
           "raw": "1/0"
         },
         "1100": {
-          "status": "easy",
-          "text": "1/1",
-          "raw": "1/1"
+          "status": "medium",
+          "text": "1/4",
+          "raw": "1/4"
         },
         "1300": {
           "status": "hot",
@@ -1752,9 +1752,9 @@
           "raw": "1/0"
         },
         "1100": {
-          "status": "hot",
-          "text": "★1/0",
-          "raw": "1/0"
+          "status": "easy",
+          "text": "1/2",
+          "raw": "1/2"
         },
         "1300": {
           "status": "hot",
@@ -2500,9 +2500,9 @@
           "raw": "1/0"
         },
         "1500": {
-          "status": "hot",
-          "text": "★1/0",
-          "raw": "1/0"
+          "status": "easy",
+          "text": "1/1",
+          "raw": "1/1"
         },
         "1700": {
           "status": "hot",
@@ -2532,9 +2532,9 @@
           "raw": "1/0"
         },
         "1500": {
-          "status": "hot",
-          "text": "★1/0",
-          "raw": "1/0"
+          "status": "easy",
+          "text": "1/1",
+          "raw": "1/1"
         },
         "1700": {
           "status": "hot",
@@ -2564,9 +2564,9 @@
           "raw": "1/0"
         },
         "1500": {
-          "status": "hot",
-          "text": "★1/0",
-          "raw": "1/0"
+          "status": "easy",
+          "text": "1/1",
+          "raw": "1/1"
         },
         "1700": {
           "status": "hot",
@@ -2596,9 +2596,9 @@
           "raw": "1/0"
         },
         "1500": {
-          "status": "hot",
-          "text": "★1/0",
-          "raw": "1/0"
+          "status": "easy",
+          "text": "1/1",
+          "raw": "1/1"
         },
         "1700": {
           "status": "hot",
@@ -2702,9 +2702,9 @@
           "raw": "1/0"
         },
         "1830": {
-          "status": "hot",
-          "text": "★1/0",
-          "raw": "1/0"
+          "status": "medium",
+          "text": "1/6",
+          "raw": "1/6"
         }
       },
       "2026-05-09": {
@@ -2926,9 +2926,9 @@
           "raw": "1/0"
         },
         "1830": {
-          "status": "hot",
-          "text": "★1/0",
-          "raw": "1/0"
+          "status": "medium",
+          "text": "1/6",
+          "raw": "1/6"
         }
       },
       "2026-05-16": {
@@ -3150,9 +3150,9 @@
           "raw": "1/0"
         },
         "1830": {
-          "status": "hot",
-          "text": "★1/0",
-          "raw": "1/0"
+          "status": "medium",
+          "text": "1/5",
+          "raw": "1/5"
         }
       },
       "2026-05-23": {
@@ -3374,9 +3374,9 @@
           "raw": "1/0"
         },
         "1830": {
-          "status": "hot",
-          "text": "★1/0",
-          "raw": "1/0"
+          "status": "medium",
+          "text": "1/5",
+          "raw": "1/5"
         }
       },
       "2026-05-30": {
@@ -4183,9 +4183,9 @@
       },
       "2026-05-24": {
         "0900": {
-          "status": "medium",
-          "text": "1/4",
-          "raw": "1/4"
+          "status": "hard",
+          "text": "1/12",
+          "raw": "1/12"
         },
         "1100": {
           "status": "hot",
@@ -5605,9 +5605,9 @@
           "raw": "1/0"
         },
         "1300": {
-          "status": "hot",
-          "text": "★1/0",
-          "raw": "1/0"
+          "status": "easy",
+          "text": "1/1",
+          "raw": "1/1"
         },
         "1500": {
           "status": "hot",
@@ -5632,9 +5632,9 @@
           "raw": "1/0"
         },
         "1100": {
-          "status": "hot",
-          "text": "★1/0",
-          "raw": "1/0"
+          "status": "hard",
+          "text": "1/20",
+          "raw": "1/20"
         },
         "1300": {
           "status": "hot",
@@ -5829,9 +5829,9 @@
           "raw": "1/0"
         },
         "1300": {
-          "status": "hot",
-          "text": "★1/0",
-          "raw": "1/0"
+          "status": "easy",
+          "text": "1/1",
+          "raw": "1/1"
         },
         "1500": {
           "status": "hot",
@@ -5856,9 +5856,9 @@
           "raw": "1/0"
         },
         "1100": {
-          "status": "hot",
-          "text": "★1/0",
-          "raw": "1/0"
+          "status": "hard",
+          "text": "1/20",
+          "raw": "1/20"
         },
         "1300": {
           "status": "hot",
@@ -6053,9 +6053,9 @@
           "raw": "1/0"
         },
         "1300": {
-          "status": "hot",
-          "text": "★1/0",
-          "raw": "1/0"
+          "status": "easy",
+          "text": "1/1",
+          "raw": "1/1"
         },
         "1500": {
           "status": "hot",
@@ -6080,9 +6080,9 @@
           "raw": "1/0"
         },
         "1100": {
-          "status": "hot",
-          "text": "★1/0",
-          "raw": "1/0"
+          "status": "hard",
+          "text": "1/20",
+          "raw": "1/20"
         },
         "1300": {
           "status": "hot",
@@ -6277,9 +6277,9 @@
           "raw": "1/0"
         },
         "1300": {
-          "status": "hot",
-          "text": "★1/0",
-          "raw": "1/0"
+          "status": "easy",
+          "text": "1/1",
+          "raw": "1/1"
         },
         "1500": {
           "status": "hot",
@@ -6304,9 +6304,9 @@
           "raw": "1/0"
         },
         "1100": {
-          "status": "hot",
-          "text": "★1/0",
-          "raw": "1/0"
+          "status": "hard",
+          "text": "1/20",
+          "raw": "1/20"
         },
         "1300": {
           "status": "hot",
@@ -6435,8 +6435,8 @@
         },
         "1100": {
           "status": "hard",
-          "text": "1/15",
-          "raw": "1/15"
+          "text": "1/20",
+          "raw": "1/20"
         },
         "1300": {
           "status": "hot",
@@ -6599,14 +6599,14 @@
           "raw": "1/0"
         },
         "1300": {
-          "status": "hot",
-          "text": "★1/0",
-          "raw": "1/0"
+          "status": "easy",
+          "text": "1/1",
+          "raw": "1/1"
         },
         "1500": {
-          "status": "hot",
-          "text": "★1/0",
-          "raw": "1/0"
+          "status": "easy",
+          "text": "1/1",
+          "raw": "1/1"
         },
         "1700": {
           "status": "hot",
@@ -6621,9 +6621,9 @@
       },
       "2026-05-07": {
         "0900": {
-          "status": "hot",
-          "text": "★1/0",
-          "raw": "1/0"
+          "status": "easy",
+          "text": "1/3",
+          "raw": "1/3"
         },
         "1100": {
           "status": "easy",
@@ -6658,9 +6658,9 @@
           "raw": "1/0"
         },
         "1100": {
-          "status": "medium",
-          "text": "1/10",
-          "raw": "1/10"
+          "status": "hard",
+          "text": "1/15",
+          "raw": "1/15"
         },
         "1300": {
           "status": "hot",
@@ -6786,14 +6786,14 @@
           "raw": "1/0"
         },
         "1100": {
-          "status": "medium",
-          "text": "1/10",
-          "raw": "1/10"
+          "status": "hard",
+          "text": "1/20",
+          "raw": "1/20"
         },
         "1300": {
-          "status": "medium",
-          "text": "1/9",
-          "raw": "1/9"
+          "status": "hard",
+          "text": "1/15",
+          "raw": "1/15"
         },
         "1500": {
           "status": "hot",
@@ -6823,14 +6823,14 @@
           "raw": "1/0"
         },
         "1300": {
-          "status": "hot",
-          "text": "★1/0",
-          "raw": "1/0"
+          "status": "easy",
+          "text": "1/1",
+          "raw": "1/1"
         },
         "1500": {
-          "status": "hot",
-          "text": "★1/0",
-          "raw": "1/0"
+          "status": "easy",
+          "text": "1/1",
+          "raw": "1/1"
         },
         "1700": {
           "status": "hot",
@@ -6882,9 +6882,9 @@
           "raw": "1/0"
         },
         "1100": {
-          "status": "medium",
-          "text": "1/9",
-          "raw": "1/9"
+          "status": "hard",
+          "text": "1/15",
+          "raw": "1/15"
         },
         "1300": {
           "status": "hot",
@@ -7010,14 +7010,14 @@
           "raw": "1/0"
         },
         "1100": {
-          "status": "medium",
-          "text": "1/10",
-          "raw": "1/10"
+          "status": "hard",
+          "text": "1/25",
+          "raw": "1/25"
         },
         "1300": {
-          "status": "medium",
-          "text": "1/9",
-          "raw": "1/9"
+          "status": "hard",
+          "text": "1/15",
+          "raw": "1/15"
         },
         "1500": {
           "status": "hot",
@@ -7052,9 +7052,9 @@
           "raw": "1/0"
         },
         "1500": {
-          "status": "hot",
-          "text": "★1/0",
-          "raw": "1/0"
+          "status": "easy",
+          "text": "1/1",
+          "raw": "1/1"
         },
         "1700": {
           "status": "hot",
@@ -7069,9 +7069,9 @@
       },
       "2026-05-21": {
         "0900": {
-          "status": "hot",
-          "text": "★1/0",
-          "raw": "1/0"
+          "status": "medium",
+          "text": "1/4",
+          "raw": "1/4"
         },
         "1100": {
           "status": "easy",
@@ -7106,9 +7106,9 @@
           "raw": "1/0"
         },
         "1100": {
-          "status": "medium",
-          "text": "1/10",
-          "raw": "1/10"
+          "status": "hard",
+          "text": "1/15",
+          "raw": "1/15"
         },
         "1300": {
           "status": "hot",
@@ -7276,9 +7276,9 @@
           "raw": "1/0"
         },
         "1500": {
-          "status": "hot",
-          "text": "★1/0",
-          "raw": "1/0"
+          "status": "easy",
+          "text": "1/1",
+          "raw": "1/1"
         },
         "1700": {
           "status": "hot",
@@ -7330,9 +7330,9 @@
           "raw": "1/0"
         },
         "1100": {
-          "status": "hot",
-          "text": "★1/0",
-          "raw": "1/0"
+          "status": "hard",
+          "text": "1/15",
+          "raw": "1/15"
         },
         "1300": {
           "status": "hot",
@@ -7497,9 +7497,9 @@
           "raw": "1/0"
         },
         "1300": {
-          "status": "hot",
-          "text": "★1/0",
-          "raw": "1/0"
+          "status": "medium",
+          "text": "1/8",
+          "raw": "1/8"
         },
         "1500": {
           "status": "hot",
@@ -7561,9 +7561,9 @@
           "raw": "1/0"
         },
         "1300": {
-          "status": "hot",
-          "text": "★1/0",
-          "raw": "1/0"
+          "status": "medium",
+          "text": "1/4",
+          "raw": "1/4"
         },
         "1500": {
           "status": "hot",
@@ -7615,9 +7615,9 @@
       },
       "2026-05-07": {
         "0900": {
-          "status": "hot",
-          "text": "★1/0",
-          "raw": "1/0"
+          "status": "medium",
+          "text": "1/6",
+          "raw": "1/6"
         },
         "1100": {
           "status": "hot",
@@ -7721,9 +7721,9 @@
           "raw": "1/0"
         },
         "1300": {
-          "status": "hot",
-          "text": "★1/0",
-          "raw": "1/0"
+          "status": "hard",
+          "text": "1/12",
+          "raw": "1/12"
         },
         "1500": {
           "status": "hot",
@@ -7786,8 +7786,8 @@
         },
         "1300": {
           "status": "hard",
-          "text": "1/18",
-          "raw": "1/18"
+          "text": "1/30",
+          "raw": "1/30"
         },
         "1500": {
           "status": "hot",
@@ -8010,8 +8010,8 @@
         },
         "1300": {
           "status": "hard",
-          "text": "1/18",
-          "raw": "1/18"
+          "text": "1/30",
+          "raw": "1/30"
         },
         "1500": {
           "status": "hot",
@@ -8063,9 +8063,9 @@
       },
       "2026-05-21": {
         "0900": {
-          "status": "hot",
-          "text": "★1/0",
-          "raw": "1/0"
+          "status": "medium",
+          "text": "1/5",
+          "raw": "1/5"
         },
         "1100": {
           "status": "hot",
@@ -10452,9 +10452,9 @@
           "raw": "1/0"
         },
         "1500": {
-          "status": "hot",
-          "text": "★1/0",
-          "raw": "1/0"
+          "status": "easy",
+          "text": "1/2",
+          "raw": "1/2"
         },
         "1700": {
           "status": "hot",
@@ -11776,9 +11776,9 @@
           "raw": "1/0"
         },
         "1830": {
-          "status": "hot",
-          "text": "★1/0",
-          "raw": "1/0"
+          "status": "hard",
+          "text": "1/22",
+          "raw": "1/22"
         }
       },
       "2026-05-13": {
@@ -12000,9 +12000,9 @@
           "raw": "1/0"
         },
         "1830": {
-          "status": "hot",
-          "text": "★1/0",
-          "raw": "1/0"
+          "status": "hard",
+          "text": "1/22",
+          "raw": "1/22"
         }
       },
       "2026-05-20": {
