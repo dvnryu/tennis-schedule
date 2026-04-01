@@ -1,7 +1,7 @@
 {
   "version": 1,
   "mode": "reservation",
-  "generated_at": "2026-04-01T17:43+09:00",
+  "generated_at": "2026-04-01T18:51+09:00",
   "timezone": "Asia/Tokyo",
   "page": {
     "title": "富士見テニスコート 予約空き状況",
@@ -810,9 +810,9 @@
           "raw": "空き"
         },
         "1700": {
-          "status": "closed",
-          "text": "休",
-          "raw": "保守日・主催事業"
+          "status": "open",
+          "text": "○空き",
+          "raw": "空き"
         },
         "1830": {
           "status": "full",
@@ -2764,9 +2764,9 @@
           "raw": "空き"
         },
         "1700": {
-          "status": "closed",
-          "text": "休",
-          "raw": "保守日・主催事業"
+          "status": "open",
+          "text": "○空き",
+          "raw": "空き"
         },
         "1830": {
           "status": "full",
@@ -4718,9 +4718,9 @@
           "raw": "空き"
         },
         "1700": {
-          "status": "closed",
-          "text": "休",
-          "raw": "保守日・主催事業"
+          "status": "open",
+          "text": "○空き",
+          "raw": "空き"
         },
         "1830": {
           "status": "closed",
@@ -6672,9 +6672,9 @@
           "raw": "空き"
         },
         "1700": {
-          "status": "closed",
-          "text": "休",
-          "raw": "保守日・主催事業"
+          "status": "open",
+          "text": "○空き",
+          "raw": "空き"
         },
         "1830": {
           "status": "full",
@@ -8626,9 +8626,9 @@
           "raw": "空き"
         },
         "1700": {
-          "status": "closed",
-          "text": "休",
-          "raw": "保守日・主催事業"
+          "status": "open",
+          "text": "○空き",
+          "raw": "空き"
         },
         "1830": {
           "status": "full",
@@ -10580,9 +10580,9 @@
           "raw": "空き"
         },
         "1700": {
-          "status": "closed",
-          "text": "休",
-          "raw": "保守日・主催事業"
+          "status": "open",
+          "text": "○空き",
+          "raw": "空き"
         },
         "1830": {
           "status": "full",
@@ -12534,9 +12534,9 @@
           "raw": "空き"
         },
         "1700": {
-          "status": "closed",
-          "text": "休",
-          "raw": "保守日・主催事業"
+          "status": "open",
+          "text": "○空き",
+          "raw": "空き"
         },
         "1830": {
           "status": "full",
@@ -14488,9 +14488,9 @@
           "raw": "空き"
         },
         "1700": {
-          "status": "closed",
-          "text": "休",
-          "raw": "保守日・主催事業"
+          "status": "open",
+          "text": "○空き",
+          "raw": "空き"
         },
         "1830": {
           "status": "full",
@@ -16442,9 +16442,9 @@
           "raw": "空き"
         },
         "1700": {
-          "status": "closed",
-          "text": "休",
-          "raw": "保守日・主催事業"
+          "status": "open",
+          "text": "○空き",
+          "raw": "空き"
         },
         "1830": {
           "status": "full",
@@ -18396,9 +18396,9 @@
           "raw": "空き"
         },
         "1700": {
-          "status": "closed",
-          "text": "休",
-          "raw": "保守日・主催事業"
+          "status": "open",
+          "text": "○空き",
+          "raw": "空き"
         },
         "1830": {
           "status": "full",
@@ -20350,9 +20350,9 @@
           "raw": "空き"
         },
         "1700": {
-          "status": "closed",
-          "text": "休",
-          "raw": "保守日・主催事業"
+          "status": "open",
+          "text": "○空き",
+          "raw": "空き"
         },
         "1830": {
           "status": "full",
