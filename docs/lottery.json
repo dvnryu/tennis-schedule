@@ -1,7 +1,7 @@
 {
   "version": 1,
   "mode": "lottery",
-  "generated_at": "2026-04-02T07:59+09:00",
+  "generated_at": "2026-04-02T08:38+09:00",
   "timezone": "Asia/Tokyo",
   "page": {
     "title": "富士見テニスコート 抽選申込状況",
@@ -9141,9 +9141,9 @@
           "raw": "-"
         },
         "1700": {
-          "status": "hot",
-          "text": "★1/0",
-          "raw": "1/0"
+          "status": "easy",
+          "text": "1/3",
+          "raw": "1/3"
         },
         "1830": {
           "status": "hot",
@@ -10597,9 +10597,9 @@
       },
       "2026-05-07": {
         "0900": {
-          "status": "hot",
-          "text": "★1/0",
-          "raw": "1/0"
+          "status": "medium",
+          "text": "1/5",
+          "raw": "1/5"
         },
         "1100": {
           "status": "hot",
@@ -10821,9 +10821,9 @@
       },
       "2026-05-14": {
         "0900": {
-          "status": "hot",
-          "text": "★1/0",
-          "raw": "1/0"
+          "status": "medium",
+          "text": "1/5",
+          "raw": "1/5"
         },
         "1100": {
           "status": "easy",
@@ -11269,9 +11269,9 @@
       },
       "2026-05-28": {
         "0900": {
-          "status": "hot",
-          "text": "★1/0",
-          "raw": "1/0"
+          "status": "medium",
+          "text": "1/5",
+          "raw": "1/5"
         },
         "1100": {
           "status": "easy",
