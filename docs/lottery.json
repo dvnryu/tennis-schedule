@@ -1,7 +1,7 @@
 {
   "version": 1,
   "mode": "lottery",
-  "generated_at": "2026-04-02T08:38+09:00",
+  "generated_at": "2026-04-02T09:02+09:00",
   "timezone": "Asia/Tokyo",
   "page": {
     "title": "富士見テニスコート 抽選申込状況",
@@ -485,9 +485,9 @@
           "raw": "1/1"
         },
         "1700": {
-          "status": "hot",
-          "text": "★1/0",
-          "raw": "1/0"
+          "status": "easy",
+          "text": "1/1",
+          "raw": "1/1"
         },
         "1830": {
           "status": "easy",
@@ -5467,9 +5467,9 @@
       },
       "2026-05-02": {
         "0900": {
-          "status": "hot",
-          "text": "★1/0",
-          "raw": "1/0"
+          "status": "easy",
+          "text": "1/1",
+          "raw": "1/1"
         },
         "1100": {
           "status": "hard",
@@ -6461,9 +6461,9 @@
       },
       "2026-05-02": {
         "0900": {
-          "status": "hot",
-          "text": "★1/0",
-          "raw": "1/0"
+          "status": "easy",
+          "text": "1/1",
+          "raw": "1/1"
         },
         "1100": {
           "status": "hot",
@@ -7520,8 +7520,8 @@
       "2026-05-04": {
         "0900": {
           "status": "medium",
-          "text": "1/5",
-          "raw": "1/5"
+          "text": "1/9",
+          "raw": "1/9"
         },
         "1100": {
           "status": "easy",
@@ -8191,9 +8191,9 @@
       },
       "2026-05-25": {
         "0900": {
-          "status": "easy",
-          "text": "1/1",
-          "raw": "1/1"
+          "status": "medium",
+          "text": "1/8",
+          "raw": "1/8"
         },
         "1100": {
           "status": "hot",
@@ -8961,9 +8961,9 @@
       },
       "2026-05-18": {
         "0900": {
-          "status": "easy",
-          "text": "1/1",
-          "raw": "1/1"
+          "status": "hard",
+          "text": "1/16",
+          "raw": "1/16"
         },
         "1100": {
           "status": "hot",
@@ -9581,14 +9581,14 @@
           "raw": "1/0"
         },
         "1300": {
-          "status": "medium",
-          "text": "1/10",
-          "raw": "1/10"
+          "status": "hard",
+          "text": "1/11",
+          "raw": "1/11"
         },
         "1500": {
-          "status": "medium",
-          "text": "1/10",
-          "raw": "1/10"
+          "status": "hard",
+          "text": "1/11",
+          "raw": "1/11"
         },
         "1700": {
           "status": "hot",
@@ -11495,14 +11495,14 @@
       },
       "2026-05-04": {
         "0900": {
-          "status": "hot",
-          "text": "★1/0",
-          "raw": "1/0"
+          "status": "easy",
+          "text": "1/2",
+          "raw": "1/2"
         },
         "1100": {
-          "status": "hot",
-          "text": "★1/0",
-          "raw": "1/0"
+          "status": "easy",
+          "text": "1/2",
+          "raw": "1/2"
         },
         "1300": {
           "status": "hot",
@@ -11543,8 +11543,8 @@
         },
         "1500": {
           "status": "easy",
-          "text": "1/1",
-          "raw": "1/1"
+          "text": "1/2",
+          "raw": "1/2"
         },
         "1700": {
           "status": "hot",
@@ -11675,9 +11675,9 @@
           "raw": "-"
         },
         "1700": {
-          "status": "hot",
-          "text": "★1/0",
-          "raw": "1/0"
+          "status": "medium",
+          "text": "1/4",
+          "raw": "1/4"
         },
         "1830": {
           "status": "hot",
@@ -11948,14 +11948,14 @@
           "raw": "1/0"
         },
         "1100": {
-          "status": "hot",
-          "text": "★1/0",
-          "raw": "1/0"
+          "status": "easy",
+          "text": "1/2",
+          "raw": "1/2"
         },
         "1300": {
-          "status": "hot",
-          "text": "★1/0",
-          "raw": "1/0"
+          "status": "easy",
+          "text": "1/2",
+          "raw": "1/2"
         },
         "1500": {
           "status": "hot",
@@ -11975,14 +11975,14 @@
       },
       "2026-05-19": {
         "0900": {
-          "status": "hot",
-          "text": "★1/0",
-          "raw": "1/0"
+          "status": "easy",
+          "text": "1/2",
+          "raw": "1/2"
         },
         "1100": {
-          "status": "hot",
-          "text": "★1/0",
-          "raw": "1/0"
+          "status": "easy",
+          "text": "1/2",
+          "raw": "1/2"
         },
         "1300": {
           "status": "hard",
