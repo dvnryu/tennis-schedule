@@ -1,7 +1,7 @@
 {
   "version": 1,
   "mode": "lottery",
-  "generated_at": "2026-04-05T08:29+09:00",
+  "generated_at": "2026-04-05T08:56+09:00",
   "timezone": "Asia/Tokyo",
   "page": {
     "title": "富士見テニスコート 抽選申込状況",
@@ -6471,9 +6471,9 @@
           "raw": "1/2"
         },
         "1300": {
-          "status": "hot",
-          "text": "★1/0",
-          "raw": "1/0"
+          "status": "easy",
+          "text": "1/2",
+          "raw": "1/2"
         },
         "1500": {
           "status": "easy",
@@ -8417,9 +8417,9 @@
     "court_9": {
       "2026-05-01": {
         "0900": {
-          "status": "easy",
-          "text": "1/3",
-          "raw": "1/3"
+          "status": "hard",
+          "text": "1/17",
+          "raw": "1/17"
         },
         "1100": {
           "status": "medium",
@@ -8641,9 +8641,9 @@
       },
       "2026-05-08": {
         "0900": {
-          "status": "easy",
-          "text": "1/3",
-          "raw": "1/3"
+          "status": "hard",
+          "text": "1/18",
+          "raw": "1/18"
         },
         "1100": {
           "status": "medium",
@@ -8865,9 +8865,9 @@
       },
       "2026-05-15": {
         "0900": {
-          "status": "easy",
-          "text": "1/3",
-          "raw": "1/3"
+          "status": "hard",
+          "text": "1/17",
+          "raw": "1/17"
         },
         "1100": {
           "status": "medium",
@@ -9089,9 +9089,9 @@
       },
       "2026-05-22": {
         "0900": {
-          "status": "easy",
-          "text": "1/3",
-          "raw": "1/3"
+          "status": "hard",
+          "text": "1/17",
+          "raw": "1/17"
         },
         "1100": {
           "status": "medium",
@@ -9313,9 +9313,9 @@
       },
       "2026-05-29": {
         "0900": {
-          "status": "easy",
-          "text": "1/3",
-          "raw": "1/3"
+          "status": "hard",
+          "text": "1/18",
+          "raw": "1/18"
         },
         "1100": {
           "status": "medium",
